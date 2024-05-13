@@ -1,0 +1,89 @@
+import { defineStore } from "pinia";
+
+export const useAuthStore = defineStore("auth", {
+  state: () => ({
+    isAuthenticated: false,
+    user: {
+      username: null,
+    },
+  }),
+  actions: {
+    async checkAuth() {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/auth/check`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok && response.status !== 401) {
+          throw new Error("Response not OK");
+        }
+
+        const authStatus = await response.json();
+
+        if (!response.ok && response.status === 401) {
+          const refreshResponse = await fetch(
+            `${import.meta.env.VITE_API_URL}/auth/refresh`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            }
+          );
+
+          if (!refreshResponse.ok) {
+            throw new Error("Refresh token failed");
+          }
+
+          const refreshStatus = await refreshResponse.json();
+
+          if (refreshStatus.error) {
+            this.isAuthenticated = false;
+            localStorage.removeItem("username");
+          } else {
+            this.isAuthenticated = true;
+            this.user.username = refreshStatus.username;
+            // localStorage.setItem("username", refreshStatus.username);
+          }
+        } else if (response.ok) {
+          this.isAuthenticated = true;
+          this.user.username = authStatus.username;
+          // localStorage.setItem("username", authStatus.username);
+        }
+      } catch (error) {
+        this.isAuthenticated = false;
+        localStorage.removeItem("username");
+      }
+    },
+    async logout() {
+      this.isAuthenticated = false;
+
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/auth/logout`,
+          {
+            method: "POST",
+            credentials: "include",
+          }
+        );
+
+        if (response.ok) {
+          localStorage.removeItem("username");
+          navigateTo("/");
+        } else {
+          console.error("Logout failed");
+        }
+      } catch (error) {
+        console.error("Logout error:", error);
+      }
+    },
+  },
+});
