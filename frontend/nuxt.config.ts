@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  ssr: true,
+  ssr: false,
   modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt"],
   app: {
     // baseURL: '/star-citizen-tool/',
