@@ -1,4 +1,3 @@
-const serverless = require("serverless-http");
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -60,17 +59,18 @@ app.use((req, res) => {
 // Error handler
 app.use(errorHandler);
 
-// Handler export for serverless
-module.exports.handler = async (req, res) => {
-  try {
-    await db.sequelize.authenticate();
-    console.log("Database connection has been established successfully.");
-    return serverless(app)(req, res);
-  } catch (error) {
-    console.error("Unable to connect to the database:", error);
-    res.status(500).send("Database connection failed");
-  }
-};
+// Server start
+db.sequelize
+  .authenticate()
+  .then(() => console.log("Connexion à la base de données réussie."))
+  .then(() => {
+    app.listen(process.env.SERVER_PORT, () =>
+      console.log(`Example app listening at ${process.env.SERVER_PORT}`)
+    );
+  })
+  .catch((error) =>
+    console.log("Connexion à la base de données échouée.", error)
+  );
 
 // Optional: Hard reset of the database (drop all tables and recreate them)
 // db.sequelize
@@ -79,18 +79,3 @@ module.exports.handler = async (req, res) => {
 //     console.log("All tables were dropped and recreated successfully.")
 //   )
 //   .catch((error) => console.log("An error occurred:", error));
-
-// Old server start
-// db.sequelize
-//   .authenticate()
-//   .then(() => console.log("Connexion à la base de données réussie."))
-//   .then(() => {
-//     app.listen(process.env.SERVER_PORT, () =>
-//       console.log(
-//         `Example app listening at http://localhost:${process.env.SERVER_PORT}`
-//       )
-//     );
-//   })
-//   .catch((error) =>
-//     console.log("Connexion à la base de données échouée.", error)
-//   );
