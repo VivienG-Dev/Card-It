@@ -65,7 +65,7 @@ db.sequelize
   .then(() => console.log("Connexion à la base de données réussie."))
   .then(() => {
     app.listen(process.env.SERVER_PORT, () =>
-      console.log(`Example app listening at ${process.env.SERVER_PORT}`)
+      console.log(`Example app listening at ${process.env.APP_URL}`)
     );
   })
   .catch((error) =>
