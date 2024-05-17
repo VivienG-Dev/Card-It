@@ -1,3 +1,4 @@
+const serverless = require("serverless-http");
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -75,4 +76,4 @@ db.sequelize
 //   )
 //   .catch((error) => console.log("An error occurred:", error));
 
-module.exports = app;
+module.exports = serverless(app);
