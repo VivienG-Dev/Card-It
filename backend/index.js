@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
-const { Sequelize } = require("sequelize");
+// const { Sequelize } = require("sequelize");
 
 // Database configuration
 const db = require("./db.config");
