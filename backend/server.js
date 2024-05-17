@@ -59,16 +59,10 @@ app.use((req, res) => {
 // Error handler
 app.use(errorHandler);
 
-// Server start
-const port = process.env.PORT || 3001;
+// Database authentication
 db.sequelize
   .authenticate()
   .then(() => console.log("Connexion à la base de données réussie."))
-  .then(() => {
-    app.listen(port, () =>
-      console.log(`Example app listening at ${process.env.APP_URL}`)
-    );
-  })
   .catch((error) =>
     console.log("Connexion à la base de données échouée.", error)
   );
@@ -80,3 +74,5 @@ db.sequelize
 //     console.log("All tables were dropped and recreated successfully.")
 //   )
 //   .catch((error) => console.log("An error occurred:", error));
+
+module.exports = app;
