@@ -9,6 +9,7 @@ if (!sequelize) {
     process.env.DB_PASSWORD,
     {
       dialect: "postgres",
+      dialectModule: require("pg"),
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
       logging: process.env.NODE_ENV === "development" ? console.log : false, // Conditional logging
