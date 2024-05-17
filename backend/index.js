@@ -15,7 +15,7 @@ const app = express();
 app.use(helmet());
 app.use(
   cors({
-    origin: "*",
+    origin: process.env.APP_URL,
     allowedHeaders: ["Content-Type", "Accept", "Authorization"],
     preflightContinue: false,
     optionsSuccessStatus: 204,
