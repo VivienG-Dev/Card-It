@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node -r dotenv/config server.js",
-    "dev": "node -r dotenv/config --watch server.js",
+    "dev": "node -r dotenv/config --watch start.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "VivienG",
