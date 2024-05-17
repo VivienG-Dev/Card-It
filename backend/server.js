@@ -60,11 +60,12 @@ app.use((req, res) => {
 app.use(errorHandler);
 
 // Server start
+const port = process.env.PORT || 3001;
 db.sequelize
   .authenticate()
   .then(() => console.log("Connexion à la base de données réussie."))
   .then(() => {
-    app.listen(process.env.SERVER_PORT, () =>
+    app.listen(port, () =>
       console.log(`Example app listening at ${process.env.APP_URL}`)
     );
   })
