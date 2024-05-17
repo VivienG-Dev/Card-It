@@ -76,4 +76,10 @@ db.sequelize
 //   )
 //   .catch((error) => console.log("An error occurred:", error));
 
-module.exports = serverless(app);
+// module.exports = serverless(app);
+
+const port = process.env.PORT || 3001;
+
+app.listen(port, () =>
+  console.log(`Example app listening at ${process.env.APP_URL}`)
+);
