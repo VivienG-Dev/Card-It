@@ -8,7 +8,8 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 
-const { titleError, descriptionError, validateTitle, validateDescription } = useValidation();
+const { titleError, descriptionError, validateTitle, validateDescription } =
+  useValidation();
 
 const username = ref(route.params.username);
 const deckId = ref(route.params.deckId);
@@ -25,14 +26,22 @@ function createCard() {
   createCardError.value = null;
   createCardLoading.value = true;
 
-  fetch(`http://localhost:3001/users/${username.value}/decks/${deckId.value}/cards`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ title: title.value, description: description.value }),
-    credentials: "include",
-  })
+  fetch(
+    `${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${
+      deckId.value
+    }/cards`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: title.value,
+        description: description.value,
+      }),
+      credentials: "include",
+    }
+  )
     .then((response) => {
       if (!response.ok) {
         return response.json().then((body) => {
@@ -58,33 +67,67 @@ function createCard() {
   <div class="flex flex-col space-y-16">
     <div class="flex justify-between">
       <div class="w-28">
-        <Icons @click="goBack()" svgClass="w-8 h-8 cursor-pointer" isType="arrowLeft" />
+        <Icons
+          @click="goBack()"
+          svgClass="w-8 h-8 cursor-pointer"
+          isType="arrowLeft"
+        />
       </div>
       <h2 class="text-center text-xl font-bold w-full">Create a card</h2>
       <div class="w-28" />
     </div>
     <div class="flex flex-col items-center w-full space-y-4">
-      <form @submit.prevent="createCard()" class="space-y-4 w-full sm:w-[450px]">
+      <form
+        @submit.prevent="createCard()"
+        class="space-y-4 w-full sm:w-[450px]"
+      >
         <div class="flex flex-col space-y-2">
-          <div class="flex justify-center items-center w-full h-10 rounded-lg text-sm" :class="{
-            'bg-red-100 text-red-500': createCardError,
-            'bg-green-100 text-green-500': updateCardSuccess,
-          }">
+          <div
+            class="flex justify-center items-center w-full h-10 rounded-lg text-sm"
+            :class="{
+              'bg-red-100 text-red-500': createCardError,
+              'bg-green-100 text-green-500': updateCardSuccess,
+            }"
+          >
             {{ createCardError || updateCardSuccess }}
           </div>
 
           <label for="title" class="text-sm font-light">Card Name</label>
-          <input type="text" id="title" name="title" v-model="title" @input="validateTitle(title)"
+          <input
+            type="text"
+            id="title"
+            name="title"
+            v-model="title"
+            @input="validateTitle(title)"
             class="border border-gray-300 rounded-lg p-2"
-            :class="{ 'border-red-500': createCardError === 'Title cannot be empty' || titleError }" />
-          <div class="text-red-500 text-xs text-center h-2">{{ titleError }}</div>
+            :class="{
+              'border-red-500':
+                createCardError === 'Title cannot be empty' || titleError,
+            }"
+          />
+          <div class="text-red-500 text-xs text-center h-2">
+            {{ titleError }}
+          </div>
         </div>
         <div class="flex flex-col space-y-2">
-          <label for="description" class="text-sm font-light">Card Description</label>
-          <input type="text" id="description" name="description" v-model="description"
-            @input="validateDescription(description)" class="border border-gray-300 rounded-lg p-2"
-            :class="{ 'border-red-500': createCardError === 'Description cannot be empty' || titleError }" />
-          <div class="text-red-500 text-xs text-center h-2">{{ descriptionError }}</div>
+          <label for="description" class="text-sm font-light"
+            >Card Description</label
+          >
+          <input
+            type="text"
+            id="description"
+            name="description"
+            v-model="description"
+            @input="validateDescription(description)"
+            class="border border-gray-300 rounded-lg p-2"
+            :class="{
+              'border-red-500':
+                createCardError === 'Description cannot be empty' || titleError,
+            }"
+          />
+          <div class="text-red-500 text-xs text-center h-2">
+            {{ descriptionError }}
+          </div>
         </div>
         <div class="flex flex-col space-y-2">
           <Button name="Create" color="bg-customPrimary text-white" />
