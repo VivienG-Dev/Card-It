@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const {
   sendVerificationEmail,
@@ -41,7 +41,7 @@ exports.register = async (req, res, next) => {
       throw new AuthenticationError(`Email already exists`);
     }
 
-    let hashedPassword = await bcrypt.hash(
+    let hashedPassword = await bcryptjs.hash(
       password,
       parseInt(process.env.BCRYPT_SALT_ROUNDS)
     );
@@ -83,7 +83,7 @@ exports.signIn = async (req, res, next) => {
       throw new NotFoundError("User not found");
     }
 
-    let match = await bcrypt.compare(password, user.password);
+    let match = await bcryptjs.compare(password, user.password);
     if (!match) {
       throw new AuthenticationError("Wrong password");
     }
@@ -265,7 +265,7 @@ exports.resetPassword = async (req, res, next) => {
       throw new NotFoundError("User not found");
     }
 
-    const hashedPassword = await bcrypt.hash(
+    const hashedPassword = await bcryptjs.hash(
       newPassword,
       parseInt(process.env.BCRYPT_SALT_ROUNDS)
     );
