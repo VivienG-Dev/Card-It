@@ -141,8 +141,12 @@ exports.signIn = async (req, res, next) => {
 };
 
 exports.logout = (req, res) => {
-  res.clearCookie("authToken", { path: "/" });
-  res.clearCookie("refreshToken", { path: "/" });
+  res.clearCookie("authToken", { path: "/", sameSite: "None", secure: true });
+  res.clearCookie("refreshToken", {
+    path: "/",
+    sameSite: "None",
+    secure: true,
+  });
   return res.status(200).json({ message: "Logged out" });
 };
 
