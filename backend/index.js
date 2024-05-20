@@ -11,6 +11,9 @@ const db = require("./db.config");
 // Express app
 const app = express();
 
+// Trust first proxy
+app.set("trust proxy", 1);
+
 // Middleware
 app.use(helmet());
 app.use(
