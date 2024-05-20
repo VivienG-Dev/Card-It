@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 const db = require("../db.config");
 const User = db.User;
 const Card = db.Card;
@@ -67,7 +67,9 @@ exports.updateUserData = async (req, res, next) => {
       throw new NotFoundError("User not found");
     }
 
-    const hashedPassword = password ? await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT_ROUNDS)) : undefined;
+    const hashedPassword = password
+      ? await bcryptjs.hash(password, parseInt(process.env.BCRYPT_SALT_ROUNDS))
+      : undefined;
 
     // // await User.update({ username, email, password: hashedPassword }, { where: { id: userId } });
     if (username) user.username = username.toLowerCase();
@@ -78,7 +80,10 @@ exports.updateUserData = async (req, res, next) => {
     } else {
       throw new RequestError("No changes detected");
     }
-    return res.json({ message: "User updated, please log out and log in again if you changed your username." });
+    return res.json({
+      message:
+        "User updated, please log out and log in again if you changed your username.",
+    });
   } catch (err) {
     next(err);
   }
