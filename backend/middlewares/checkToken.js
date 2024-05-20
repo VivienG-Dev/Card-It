@@ -3,7 +3,16 @@ const jwt = require("jsonwebtoken");
 const { AuthenticationError } = require("../helpers/errors/customError");
 
 const checkTokenMiddleware = (req, res, next) => {
-  const token = req.cookies.authToken;
+  let token = req.cookies.authToken;
+
+  // Check for token in Authorization header if not found in cookies
+  if (!token && req.headers.authorization) {
+    const authHeader = req.headers.authorization;
+    const bearerToken = authHeader.split(" ");
+    if (bearerToken[0] === "Bearer") {
+      token = bearerToken[1];
+    }
+  }
 
   if (!token) {
     throw new AuthenticationError("No token provided");
