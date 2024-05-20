@@ -117,14 +117,14 @@ exports.signIn = async (req, res, next) => {
     res.cookie("authToken", token, {
       httpOnly: true,
       secure: true, // Use Secure in production
-      sameSite: "lax", // Helps prevent CSRF
+      sameSite: "None", // Helps prevent CSRF
       maxAge: 24 * 60 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true, // Use Secure in production
-      sameSite: "lax", // Helps prevent CSRF
+      sameSite: "None", // Helps prevent CSRF
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
