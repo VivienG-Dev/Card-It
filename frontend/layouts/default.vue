@@ -31,21 +31,7 @@ const links = [
       <div class="svg-bg svg-bg-4"></div>
       <ClientOnly>
         <div
-          v-if="authStore.isLoading"
-          class="flex flex-col sm:flex-row space-x-0 sm:space-x-4 w-full mt-20 sm:mt-32"
-        >
-          <div
-            class="bg-white w-full rounded-lg p-10 space-y-4 flex flex-col justify-center items-center"
-          >
-            <Icons svgClass="w-8 h-8" isType="locked" />
-            <p class="text-center text-2xl font-medium">
-              Loading, please wait while my free instance on Render.com
-              restarts...
-            </p>
-          </div>
-        </div>
-        <div
-          v-else-if="authStore.isAuthenticated"
+          v-if="authStore.isAuthenticated && !authStore.isLoading"
           class="flex flex-col sm:flex-row space-x-0 sm:space-x-4 w-full mt-20 sm:mt-32"
         >
           <div class="hidden sm:flex flex-col space-y-4">
@@ -68,6 +54,20 @@ const links = [
             <slot />
           </div>
         </div>
+        <div
+          v-else-if="authStore.isAuthenticated && authStore.isLoading"
+          class="flex flex-col sm:flex-row space-x-0 sm:space-x-4 w-full mt-20 sm:mt-32"
+        >
+          <div
+            class="bg-white w-full rounded-lg p-10 space-y-4 flex flex-col justify-center items-center"
+          >
+            <Icons svgClass="w-8 h-8" isType="locked" />
+            <p class="text-center text-2xl font-medium">
+              Loading, please wait while my free instance on Render.com
+              restarts...
+            </p>
+          </div>
+        </div>
         <div v-else class="flex space-x-4 w-full mt-32">
           <div
             class="bg-white w-full h-52 rounded-lg p-3 space-y-4 flex flex-col justify-center items-center"
@@ -75,7 +75,6 @@ const links = [
             <Icons svgClass="w-8 h-8" isType="locked" />
             <p class="text-center text-2xl font-medium">
               You need to be logged in to view this page.
-              {{ authStore.isAuthenticated }}
             </p>
           </div>
         </div>

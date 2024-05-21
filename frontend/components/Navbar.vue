@@ -219,7 +219,13 @@ const links = computed(() => [
       <nuxt-link to="/">Card-It</nuxt-link>
       <ClientOnly>
         <div class="relative">
-          <div v-if="authStore.isLoading">Loading...</div>
+          <div
+            v-if="authStore.isLoading"
+            class="flex space-x-4 space-y-1 font-light"
+          >
+            Loading, please wait while my free instance on Render.com
+            restarts...
+          </div>
           <div
             v-else-if="authStore.isAuthenticated"
             class="flex space-x-4 space-y-1 font-light"

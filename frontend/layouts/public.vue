@@ -16,21 +16,7 @@ const authStore = useAuthStore();
       <div class="svg-bg svg-bg-2"></div>
       <div class="svg-bg svg-bg-4"></div>
       <ClientOnly>
-        <div
-          v-if="authStore.isLoading"
-          class="flex flex-col sm:flex-row space-x-0 sm:space-x-4 w-full mt-20 sm:mt-32"
-        >
-          <div
-            class="bg-white w-full rounded-lg p-10 space-y-4 flex flex-col justify-center items-center"
-          >
-            <Icons svgClass="w-8 h-8" isType="locked" />
-            <p class="text-center text-2xl font-medium">
-              Loading, please wait while my free instance on Render.com
-              restarts...
-            </p>
-          </div>
-        </div>
-        <div v-else class="flex space-x-4 w-full mt-32">
+        <div class="flex space-x-4 w-full mt-32">
           <div
             class="flex justify-center items-center bg-white w-full rounded-lg p-3 space-y-4"
           >
