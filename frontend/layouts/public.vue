@@ -1,7 +1,3 @@
-<script setup>
-const authStore = useAuthStore();
-</script>
-
 <template>
   <div class="container max-w-screen-xl mx-auto px-4">
     <div class="fixed top-5 right-0 left-0 z-20 w-full px-4">

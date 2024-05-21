@@ -1,6 +1,6 @@
-export default defineNuxtPlugin(async () => {
+export default defineNuxtPlugin(() => {
   const authStore = useAuthStore();
   if (process.client) {
-    await authStore.checkAuth();
+    authStore.checkAuth();
   }
 });

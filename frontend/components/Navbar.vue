@@ -220,14 +220,7 @@ const links = computed(() => [
       <ClientOnly>
         <div class="relative">
           <div
-            v-if="authStore.isLoading"
-            class="flex space-x-4 space-y-1 font-light"
-          >
-            Loading, please wait while my free instance on Render.com
-            restarts...
-          </div>
-          <div
-            v-else-if="authStore.isAuthenticated"
+            v-if="authStore.isAuthenticated"
             class="flex space-x-4 space-y-1 font-light"
           >
             <button
@@ -251,7 +244,7 @@ const links = computed(() => [
             <button @click="openModal(false)">Login</button>
           </div>
           <div
-            v-if="isMenuOpen && !authStore.isLoading"
+            v-if="isMenuOpen"
             class="absolute -right-3 mt-3 w-48 rounded-md shadow-lg bg-white z-50"
           >
             <div v-if="authStore.isAuthenticated" class="py-1">
