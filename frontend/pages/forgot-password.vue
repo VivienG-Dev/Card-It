@@ -1,5 +1,5 @@
 <script setup></script>
 
 <template>
-  <div>404</div>
+  <div>FORGOT PASSWORD PAGE</div>
 </template>
