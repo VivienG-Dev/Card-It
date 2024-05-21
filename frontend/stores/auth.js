@@ -3,12 +3,14 @@ import { defineStore } from "pinia";
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     isAuthenticated: false,
+    isLoading: true,
     user: {
       username: null,
     },
   }),
   actions: {
     async checkAuth() {
+      this.isLoading = true;
       try {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/auth/check`,
@@ -51,16 +53,16 @@ export const useAuthStore = defineStore("auth", {
           } else {
             this.isAuthenticated = true;
             this.user.username = refreshStatus.username;
-            // localStorage.setItem("username", refreshStatus.username);
           }
         } else if (response.ok) {
           this.isAuthenticated = true;
           this.user.username = authStatus.username;
-          // localStorage.setItem("username", authStatus.username);
         }
       } catch (error) {
         this.isAuthenticated = false;
         localStorage.removeItem("username");
+      } finally {
+        this.isLoading = false;
       }
     },
     async logout() {
