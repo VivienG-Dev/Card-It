@@ -9,7 +9,7 @@ export function useUserData(username) {
   const loading = ref(false);
 
   loading.value = true;
-  fetch(`http://localhost:3001/users/${username}`, {
+  fetch(`${import.meta.env.VITE_API_URL}/users/${username}`, {
     method: "GET",
     credentials: "include",
   })

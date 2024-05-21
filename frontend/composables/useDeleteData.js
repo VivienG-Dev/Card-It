@@ -8,7 +8,7 @@ export function deleteData(path) {
   const error = ref(null);
   const loading = ref(true);
 
-  return fetch(`http://localhost:3001/${path}`, {
+  return fetch(`${import.meta.env.VITE_API_URL}/${path}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -18,15 +18,15 @@ export function deleteData(path) {
     .then((response) => {
       if (!response.ok) {
         return response.json().then((body) => {
-          const errorMessage = body.error?.message || response.statusText || "Unknown error occurred";
+          const errorMessage =
+            body.error?.message ||
+            response.statusText ||
+            "Unknown error occurred";
           throw new Error(errorMessage);
         });
       }
 
       return response.json();
-      //   showModal.value = false;
-      //   toggleModal();
-      //   router.push(`/${redirectPath}`);
     })
     .catch((err) => {
       error.value = err.message;

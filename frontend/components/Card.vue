@@ -45,17 +45,25 @@ function toggleFavorite() {
   const error = ref(null);
   const loading = ref(true);
 
-  fetch(`http://localhost:3001/users/${props.username}/decks/${props.deckId}/cards/${props.cardId}/favorite`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  })
+  fetch(
+    `${import.meta.env.VITE_API_URL}/users/${props.username}/decks/${
+      props.deckId
+    }/cards/${props.cardId}/favorite`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  )
     .then((response) => {
       if (!response.ok) {
         return response.json().then((body) => {
-          const errorMessage = body.error?.message || response.statusText || "Unknown error occurred";
+          const errorMessage =
+            body.error?.message ||
+            response.statusText ||
+            "Unknown error occurred";
           throw new Error(errorMessage);
         });
       }
@@ -74,27 +82,44 @@ function toggleFavorite() {
 </script>
 
 <template>
-  <div class="card-container perspective w-36 h-48 sm:w-40 sm:h-52" @click="isFlipped = !isFlipped">
-    <div class="card" :class="{ 'is-flipped': isFlipped }" @mouseover="isHovered = true"
-      @mouseleave="isHovered = false">
+  <div
+    class="card-container perspective w-36 h-48 sm:w-40 sm:h-52"
+    @click="isFlipped = !isFlipped"
+  >
+    <div
+      class="card"
+      :class="{ 'is-flipped': isFlipped }"
+      @mouseover="isHovered = true"
+      @mouseleave="isHovered = false"
+    >
       <!-- Front of the card -->
-      <div :style="{ backgroundColor: deckColor }"
+      <div
+        :style="{ backgroundColor: deckColor }"
         class="card-face relative front border-slate-900 rounded-lg p-2 flex flex-col justify-between text-white transition-all duration-300 ease-in-out overflow-hidden"
-        :class="isHovered ? 'scale-105' : 'scale-100'">
+        :class="isHovered ? 'scale-105' : 'scale-100'"
+      >
         <div
           class="bg-gradient-to-l from-white/50 h-60 w-16 absolute -top-2 rotate-6 delay-75 transition-all duration-500 ease-in-out"
-          :class="isHovered ? 'left-44' : '-left-20'"></div>
+          :class="isHovered ? 'left-44' : '-left-20'"
+        ></div>
         <div class="w-full">
           <div class="flex justify-between items-center">
             <p class="font-thin text-sm">{{ deckTitle }}</p>
-            <Icons @click.stop="toggleFavorite()"
-              :svgClass="`w-6 h-6 ${isCardFavorite ? 'fill-white' : 'hover:fill-white'}`" isType="star" />
+            <Icons
+              @click.stop="toggleFavorite()"
+              :svgClass="`w-6 h-6 ${
+                isCardFavorite ? 'fill-white' : 'hover:fill-white'
+              }`"
+              isType="star"
+            />
           </div>
         </div>
         <p class="font-medium text-center">{{ title }}</p>
         <div class="flex justify-end">
           <nuxt-link :to="`/users/${username}/decks/${deckId}/cards/${cardId}`">
-            <button class="flex items-center bg-black px-4 rounded-xl font-light text-sm">
+            <button
+              class="flex items-center bg-black px-4 rounded-xl font-light text-sm"
+            >
               <Icons svgClass="w-3 h-3 mr-1" isType="edit" /> Edit
             </button>
           </nuxt-link>
@@ -102,8 +127,10 @@ function toggleFavorite() {
       </div>
 
       <!-- Back of the card -->
-      <div :style="{ borderColor: deckColor }"
-        class="card-face back w-40 h-52 border-2 border-t-[6px] rounded-lg p-2 flex flex-col justify-center text-black">
+      <div
+        :style="{ borderColor: deckColor }"
+        class="card-face back w-40 h-52 border-2 border-t-[6px] rounded-lg p-2 flex flex-col justify-center text-black"
+      >
         <p class="font-light text-sm">
           {{ description }}
         </p>
