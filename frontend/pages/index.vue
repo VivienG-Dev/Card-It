@@ -3,9 +3,6 @@ definePageMeta({
   layout: false,
 });
 
-import supabase from "../config/supabaseClient";
-// console.log(supabase);
-
 const expandDiv = ref(false);
 </script>
 
