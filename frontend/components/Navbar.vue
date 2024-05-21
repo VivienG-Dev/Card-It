@@ -112,6 +112,11 @@ function useRegister() {
 
       const responseData = await response.json();
 
+      if (authStore.isLoading) {
+        errorResponse.value =
+          "Loading, please wait while my free instance on Render.com restarts...";
+      }
+
       if (response.ok) {
         errorResponse.value = "";
         successfulResponse.value =
@@ -162,6 +167,11 @@ function useSignIn() {
 
       const responseData = await response.json();
 
+      if (authStore.isLoading) {
+        errorResponse.value =
+          "Loading, please wait while my free instance on Render.com restarts...";
+      }
+
       if (response.ok) {
         successfulResponse.value = responseData.message || "Login successful!";
         authStore.isAuthenticated = true;
@@ -192,7 +202,7 @@ const toggleMenu = () => {
 
 let username = ref("");
 onMounted(() => {
-  username.value = localStorage.getItem("username") || authStore.user.username; // authStore.user.username gakisas967@buzblox.com
+  username.value = localStorage.getItem("username") || authStore.user.username;
 });
 const links = computed(() => [
   { name: "Dashboard", path: `/users/${username.value}` },
@@ -209,8 +219,9 @@ const links = computed(() => [
       <nuxt-link to="/">Card-It</nuxt-link>
       <ClientOnly>
         <div class="relative">
+          <div v-if="authStore.isLoading">Loading...</div>
           <div
-            v-if="authStore.isAuthenticated"
+            v-else-if="authStore.isAuthenticated"
             class="flex space-x-4 space-y-1 font-light"
           >
             <button
@@ -234,7 +245,7 @@ const links = computed(() => [
             <button @click="openModal(false)">Login</button>
           </div>
           <div
-            v-if="isMenuOpen"
+            v-if="isMenuOpen && !authStore.isLoading"
             class="absolute -right-3 mt-3 w-48 rounded-md shadow-lg bg-white z-50"
           >
             <div v-if="authStore.isAuthenticated" class="py-1">
