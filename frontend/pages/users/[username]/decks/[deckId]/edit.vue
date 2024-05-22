@@ -24,11 +24,16 @@ function toggleModal() {
   showModal.value = !showModal.value;
 }
 
+const { titleError, descriptionError, validateTitle, validateDescription } =
+  useValidation();
+
 const error = ref(null);
 const loading = ref(false);
 async function deleteDeck() {
   toggleModal();
-  const result = await deleteData(`users/${username.value}/decks/${deckId.value}`);
+  const result = await deleteData(
+    `users/${username.value}/decks/${deckId.value}`
+  );
   error.value = result?.error;
   loading.value = result?.loading;
   router.push(`/users/${username.value}`);
@@ -53,14 +58,19 @@ function updateDeck() {
     return;
   }
 
-  fetch(`${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${deckId.value}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-    credentials: "include",
-  })
+  fetch(
+    `${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${
+      deckId.value
+    }`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      credentials: "include",
+    }
+  )
     .then((response) => {
       if (!response.ok) {
         return response.json().then((body) => {
@@ -107,6 +117,7 @@ function fetchData(url, state) {
     .then((data) => {
       if (data) {
         state.details = data.data;
+        title.value = data.data.title;
       }
     })
     .catch((err) => {
@@ -118,7 +129,12 @@ function fetchData(url, state) {
 }
 
 onMounted(() => {
-  fetchData(`${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${deckId.value}`, deckState);
+  fetchData(
+    `${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${
+      deckId.value
+    }`,
+    deckState
+  );
 });
 </script>
 
@@ -126,7 +142,11 @@ onMounted(() => {
   <div class="flex flex-col space-y-16">
     <div class="flex justify-between">
       <div class="w-28">
-        <Icons @click="goBack()" svgClass="w-8 h-8 cursor-pointer" isType="arrowLeft" />
+        <Icons
+          @click="goBack()"
+          svgClass="w-8 h-8 cursor-pointer"
+          isType="arrowLeft"
+        />
       </div>
       <h2 class="text-center text-xl font-bold w-full">Dashboard</h2>
       <div class="w-28" />
@@ -134,26 +154,55 @@ onMounted(() => {
     <div class="flex flex-col items-center w-full space-y-4">
       <div v-if="loading">Loading...</div>
       <div v-if="error">{{ error }}</div>
-      <form v-else @submit.prevent="updateDeck()" class="space-y-4 w-full sm:w-[450px]">
+      <form
+        v-else
+        @submit.prevent="updateDeck()"
+        class="space-y-4 w-full sm:w-[450px]"
+      >
         <div class="flex flex-col space-y-2">
-          <div class="flex justify-center items-center w-full h-10 rounded-lg text-sm" :class="{
-            'bg-red-100 text-red-500': updateDeckError,
-            'bg-green-100 text-green-500': updateDeckSuccess,
-          }">
+          <div
+            class="flex justify-center items-center w-full h-10 rounded-lg text-sm"
+            :class="{
+              'bg-red-100 text-red-500': updateDeckError,
+              'bg-green-100 text-green-500': updateDeckSuccess,
+            }"
+          >
             {{ updateDeckError || updateDeckSuccess }}
           </div>
 
           <label for="title" class="text-sm font-light">Deck Name</label>
-          <input type="text" id="title" name="title" v-model="title" :placeholder="deckState.details.title"
-            class="border border-gray-300 rounded-lg p-2" />
+          <input
+            type="text"
+            id="title"
+            name="title"
+            v-model="title"
+            @input="validateTitle(title)"
+            class="border border-gray-300 rounded-lg p-2"
+            :class="{
+              'border-red-500':
+                updateCardError === 'Title cannot be empty' || titleError,
+            }"
+          />
+          <div class="text-red-500 text-xs text-center h-2">
+            {{ titleError }}
+          </div>
         </div>
         <div class="flex flex-col">
           <Button name="Edit the deck" color="bg-customPrimary text-white" />
         </div>
       </form>
       <div class="text-center">
-        <button @click="toggleModal" class="text-red-600 text-base font-extralight">Delete the deck</button>
-        <Modal :isVisible="showModal" @confirm="deleteDeck()" @cancel="toggleModal">
+        <button
+          @click="toggleModal"
+          class="text-red-600 text-base font-extralight"
+        >
+          Delete the deck
+        </button>
+        <Modal
+          :isVisible="showModal"
+          @confirm="deleteDeck()"
+          @cancel="toggleModal"
+        >
           <template #content>
             <p>Are you sure you want to delete this deck?</p>
           </template>
