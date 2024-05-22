@@ -95,7 +95,11 @@ function useRegister() {
   const isLoading = ref(false);
 
   const register = async () => {
-    if (isLoading.value) return;
+    if (isLoading.value) {
+      errorResponse.value =
+        "Loading, please wait while my free account from render.com restarts...";
+      return;
+    }
 
     isLoading.value = true;
 
@@ -157,7 +161,11 @@ function useSignIn() {
   const isLoading = ref(false);
 
   const signIn = async () => {
-    if (isLoading.value) return;
+    if (isLoading.value) {
+      errorResponse.value =
+        "Loading, please wait while my free account from render.com restarts...";
+      return;
+    }
 
     isLoading.value = true;
 
