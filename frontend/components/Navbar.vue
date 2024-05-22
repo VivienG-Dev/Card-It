@@ -92,8 +92,13 @@ function useRegister() {
 
   const successfulResponse = ref("");
   const errorResponse = ref("");
+  const isLoading = ref(false);
 
   const register = async () => {
+    if (isLoading.value) return;
+
+    isLoading.value = true;
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/auth/register`,
@@ -128,6 +133,8 @@ function useRegister() {
       }
     } catch (error) {
       errorResponse.value = "Registration failed. Please try again.";
+    } finally {
+      isLoading.value = false;
     }
   };
 
@@ -147,8 +154,13 @@ function useSignIn() {
 
   const successfulResponse = ref("");
   const errorResponse = ref("");
+  const isLoading = ref(false);
 
   const signIn = async () => {
+    if (isLoading.value) return;
+
+    isLoading.value = true;
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/auth/sign-in`,
@@ -167,11 +179,6 @@ function useSignIn() {
 
       const responseData = await response.json();
 
-      if (authStore.isLoading) {
-        errorResponse.value =
-          "Loading, please wait while my free instance on Render.com restarts...";
-      }
-
       if (response.ok) {
         successfulResponse.value = responseData.message || "Login successful!";
         authStore.isAuthenticated = true;
@@ -184,6 +191,8 @@ function useSignIn() {
       }
     } catch (error) {
       errorResponse.value = "Login failed. Please try again.";
+    } finally {
+      isLoading.value = false;
     }
   };
 
