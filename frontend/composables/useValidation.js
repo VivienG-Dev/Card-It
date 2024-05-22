@@ -25,12 +25,16 @@ export function useValidation() {
   const colorError = ref("");
 
   const validateUsername = (username) => {
-    username.length < 1 ? (usernameError.value = "Username must be at least 6 characters long.") : (usernameError.value = "");
+    username.length < 1
+      ? (usernameError.value = "Username must be at least 6 characters long.")
+      : (usernameError.value = "");
   };
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    email.match(emailRegex) ? (emailError.value = "") : (emailError.value = "Please enter a valid email address.");
+    email.match(emailRegex)
+      ? (emailError.value = "")
+      : (emailError.value = "Please enter a valid email address.");
   };
 
   const validatePassword = (password) => {
@@ -57,7 +61,7 @@ export function useValidation() {
   };
 
   const validateDescription = (description) => {
-    const maxLength = 80;
+    const maxLength = 160;
     if (description.length > maxLength) {
       descriptionError.value = `Description cannot exceed ${maxLength} characters.`;
     } else if (sanitizeInput(description) !== description) {
@@ -69,7 +73,9 @@ export function useValidation() {
 
   const validateColor = (color) => {
     const colorRegex = /^#[0-9A-Fa-f]{6}$/;
-    color.match(colorRegex) ? (colorError.value = "") : (colorError.value = "Color must be in hex format (e.g., #141A1F).");
+    color.match(colorRegex)
+      ? (colorError.value = "")
+      : (colorError.value = "Color must be in hex format (e.g., #141A1F).");
   };
 
   const sanitizeInput = (input) => {
