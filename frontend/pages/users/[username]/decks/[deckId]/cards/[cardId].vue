@@ -12,7 +12,8 @@ const username = ref(route.params.username);
 const deckId = ref(route.params.deckId);
 const cardId = ref(route.params.cardId);
 
-const { titleError, descriptionError, validateTitle, validateDescription } = useValidation();
+const { titleError, descriptionError, validateTitle, validateDescription } =
+  useValidation();
 
 function goBack() {
   navigateTo(`/users/${username.value}/decks/${deckId.value}`);
@@ -38,20 +39,28 @@ function updateCard() {
     description: description.value || cardData.value.description,
   };
 
-  if (body.title === cardData.value.title && body.description === cardData.value.description) {
+  if (
+    body.title === cardData.value.title &&
+    body.description === cardData.value.description
+  ) {
     updateCardError.value = "No changes detected";
     updateLoadingCard.value = false;
     return;
   }
 
-  fetch(`${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${deckId.value}/cards/${cardId.value}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-    credentials: "include",
-  })
+  fetch(
+    `${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${
+      deckId.value
+    }/cards/${cardId.value}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      credentials: "include",
+    }
+  )
     .then((response) => {
       if (!response.ok) {
         return response.json().then((body) => {
@@ -81,17 +90,25 @@ function deleteCard() {
   const error = ref(null);
   const loading = ref(true);
 
-  fetch(`${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${deckId.value}/cards/${cardId.value}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  })
+  fetch(
+    `${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${
+      deckId.value
+    }/cards/${cardId.value}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  )
     .then((response) => {
       if (!response.ok) {
         return response.json().then((body) => {
-          const errorMessage = body.error?.message || response.statusText || "Unknown error occurred";
+          const errorMessage =
+            body.error?.message ||
+            response.statusText ||
+            "Unknown error occurred";
           throw new Error(errorMessage);
         });
       }
@@ -113,11 +130,15 @@ const cardLoading = ref(false);
 onMounted(() => {
   // Fetch the card details
   cardLoading.value = true;
-  fetch(`${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${deckId.value}/cards/${cardId.value}`, {
-    method: "GET",
-    credentials: "include",
-    cache: "force-cache",
-  })
+  fetch(
+    `${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${
+      deckId.value
+    }/cards/${cardId.value}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  )
     .then((response) => {
       if (!response.ok) {
         return response.json().then((body) => {
@@ -129,6 +150,8 @@ onMounted(() => {
     })
     .then((data) => {
       cardData.value = data.data;
+      title.value = data.data.title;
+      description.value = data.data.description;
     })
     .catch((err) => {
       cardError.value = err.message;
@@ -143,42 +166,86 @@ onMounted(() => {
   <div class="flex flex-col space-y-16">
     <div class="flex justify-between">
       <div class="w-28">
-        <Icons @click="goBack()" svgClass="w-8 h-8 cursor-pointer" isType="arrowLeft" />
+        <Icons
+          @click="goBack()"
+          svgClass="w-8 h-8 cursor-pointer"
+          isType="arrowLeft"
+        />
       </div>
       <h2 class="text-center text-xl font-bold w-full">Dashboard</h2>
       <div class="w-28" />
     </div>
     <div class="flex flex-col items-center w-full space-y-4">
-      <form @submit.prevent="updateCard()" class="space-y-4 w-full sm:w-[450px]">
+      <form
+        @submit.prevent="updateCard()"
+        class="space-y-4 w-full sm:w-[450px]"
+      >
         <div class="flex flex-col space-y-2">
-          <div class="flex justify-center items-center w-full h-10 rounded-lg text-sm" :class="{
-            'bg-red-100 text-red-500': updateCardError,
-            'bg-green-100 text-green-500': updateCardSuccess,
-          }">
+          <div
+            class="flex justify-center items-center w-full h-10 rounded-lg text-sm"
+            :class="{
+              'bg-red-100 text-red-500': updateCardError,
+              'bg-green-100 text-green-500': updateCardSuccess,
+            }"
+          >
             {{ updateCardError || updateCardSuccess }}
           </div>
 
           <label for="title" class="text-sm font-light">Card Name</label>
-          <input type="text" id="title" name="title" v-model="title" :placeholder="cardData.title"
-            @input="validateTitle(title)" class="border border-gray-300 rounded-lg p-2"
-            :class="{ 'border-red-500': updateCardError === 'Title cannot be empty' || titleError }" />
-          <div class="text-red-500 text-xs text-center h-2">{{ titleError }}</div>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            v-model="title"
+            :placeholder="cardData.title"
+            @input="validateTitle(title)"
+            class="border border-gray-300 rounded-lg p-2"
+            :class="{
+              'border-red-500':
+                updateCardError === 'Title cannot be empty' || titleError,
+            }"
+          />
+          <div class="text-red-500 text-xs text-center h-2">
+            {{ titleError }}
+          </div>
         </div>
         <div class="flex flex-col space-y-2">
-          <label for="description" class="text-sm font-light">Card Description</label>
-          <input type="text" id="description" name="description" v-model="description"
-            :placeholder="cardData.description" @input="validateDescription(description)"
+          <label for="description" class="text-sm font-light"
+            >Card Description</label
+          >
+          <textarea
+            type="text"
+            id="description"
+            name="description"
+            v-model="description"
+            @input="validateDescription(description)"
             class="border border-gray-300 rounded-lg p-2"
-            :class="{ 'border-red-500': updateCardError === 'Description cannot be empty' || descriptionError }" />
-          <div class="text-red-500 text-xs text-center h-2">{{ descriptionError }}</div>
+            :class="{
+              'border-red-500':
+                updateCardError === 'Description cannot be empty' ||
+                descriptionError,
+            }"
+          />
+          <div class="text-red-500 text-xs text-center h-2">
+            {{ descriptionError }}
+          </div>
         </div>
         <div class="flex flex-col">
           <Button name="Edit the card" color="bg-customPrimary text-white" />
         </div>
       </form>
       <div class="text-center">
-        <button @click="showModal = true" class="text-red-600 text-base font-light">Delete the card</button>
-        <Modal :isVisible="showModal" @confirm="deleteCard()" @cancel="hideModal()">
+        <button
+          @click="showModal = true"
+          class="text-red-600 text-base font-light"
+        >
+          Delete the card
+        </button>
+        <Modal
+          :isVisible="showModal"
+          @confirm="deleteCard()"
+          @cancel="hideModal()"
+        >
           <template #content>
             <p>Are you sure you want to delete this card?</p>
           </template>

@@ -113,7 +113,7 @@ function createCard() {
           <label for="description" class="text-sm font-light"
             >Card Description</label
           >
-          <input
+          <textarea
             type="text"
             id="description"
             name="description"
