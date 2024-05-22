@@ -59,7 +59,14 @@ const links = [
             class="bg-white w-full h-52 rounded-lg p-3 space-y-4 flex flex-col justify-center items-center"
           >
             <Icons svgClass="w-8 h-8" isType="locked" />
-            <p class="text-center text-2xl font-medium">
+            <p
+              v-if="authStore.isLoading"
+              class="text-center text-2xl font-medium"
+            >
+              Loading, please wait while my free account from render.com
+              restarts...
+            </p>
+            <p v-else class="text-center text-2xl font-medium">
               You need to be logged in to view this page.
             </p>
           </div>
