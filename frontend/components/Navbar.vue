@@ -130,6 +130,9 @@ function useRegister() {
         errorResponse.value = "";
         successfulResponse.value =
           responseData.message || "Registration successful!";
+        setTimeout(() => {
+          router.push(`/?modal=login`);
+        }, 2000);
       } else {
         successfulResponse.value = "";
         errorResponse.value =
