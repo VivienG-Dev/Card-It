@@ -1,17 +1,17 @@
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  host: 'in-v3.mailjet.com',
+  host: "in-v3.mailjet.com",
   port: 587,
   auth: {
     user: `${process.env.MAILJET_API_KEY}`,
-    pass: `${process.env.MAILJET_SECRET_KEY}`
-  }
+    pass: `${process.env.MAILJET_SECRET_KEY}`,
+  },
 });
 
 const sendVerificationEmail = (to, link) => {
   const mailOptions = {
-    from: "anubis.lockheart@gmail.com",
+    from: "webmaster@vivieng.com",
     to: to,
     subject: "Verify Your Email",
     html: `<p>Click this link to verify your email: <a href="${link}">Verify</a></p>`,
@@ -28,7 +28,7 @@ const sendVerificationEmail = (to, link) => {
 
 const sendPasswordResetEmail = (to, link) => {
   const mailOptions = {
-    from: "anubis.lockheart@gmail.com",
+    from: "webmaster@vivieng.com",
     to: to,
     subject: "Reset Your Password",
     html: `<p>Click this link to reset your password: <a href="${link}">Reset</a></p>`,
