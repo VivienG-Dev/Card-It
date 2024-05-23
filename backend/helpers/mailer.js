@@ -13,7 +13,7 @@ const sendVerificationEmail = (to, link) => {
   const mailOptions = {
     from: "webmaster@vivieng.com",
     to: to,
-    subject: "Verify Your Email",
+    subject: "Card-It - Verify Your Email",
     html: `<p>Click this link to verify your email: <a href="${link}">Verify</a></p>`,
   };
 
@@ -30,7 +30,7 @@ const sendPasswordResetEmail = (to, link) => {
   const mailOptions = {
     from: "webmaster@vivieng.com",
     to: to,
-    subject: "Reset Your Password",
+    subject: "Card-It - Reset Your Password",
     html: `<p>Click this link to reset your password: <a href="${link}">Reset</a></p>`,
   };
 
