@@ -35,7 +35,7 @@ exports.getUserById = async (req, res, next) => {
   }
 };
 
-exports.getAllFavoriteCards = async (req, res, next) => {
+exports.getFavoriteCards = async (req, res, next) => {
   let userId = req.userId;
 
   try {
@@ -44,7 +44,9 @@ exports.getAllFavoriteCards = async (req, res, next) => {
       throw new NotFoundError("User not found");
     }
 
-    let cards = await Card.findAll({ where: { is_favorite: true } });
+    let cards = await Card.findAll({
+      where: { is_favorite: true, user_id: userId },
+    });
     if (!cards) {
       throw new NotFoundError("Card not found");
     }
