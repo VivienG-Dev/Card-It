@@ -261,12 +261,16 @@ exports.resetPassword = async (req, res, next) => {
       throw new RequestError("Missing required information");
     }
 
+    if (newPassword !== confirmPassword) {
+      throw new RequestError("Passwords do not match");
+    }
+
     let user = await User.findOne({
       where: { passwordResetToken: token },
       raw: true,
     });
     if (!user) {
-      throw new NotFoundError("User not found");
+      throw new NotFoundError("This link is invalid or expired");
     }
 
     const hashedPassword = await bcryptjs.hash(
@@ -278,7 +282,7 @@ exports.resetPassword = async (req, res, next) => {
       { where: { passwordResetToken: token } }
     );
 
-    return res.status(200).json({ message: "Password reset" });
+    return res.status(200).json({ message: "Password reset successful" });
   } catch (err) {
     next(err);
   }
