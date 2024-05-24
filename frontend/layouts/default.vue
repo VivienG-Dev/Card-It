@@ -56,7 +56,7 @@ const links = [
         </div>
         <div v-else class="flex space-x-4 w-full mt-32">
           <div
-            class="bg-white w-full h-52 rounded-lg p-3 space-y-4 flex flex-col justify-center items-center"
+            class="bg-white w-full h-80 rounded-lg p-3 space-y-4 flex flex-col justify-center items-center"
           >
             <Icons svgClass="w-8 h-8" isType="locked" />
             <p
