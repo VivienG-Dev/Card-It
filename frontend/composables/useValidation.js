@@ -38,9 +38,8 @@ export function useValidation() {
   };
 
   const validatePassword = (password) => {
-    // const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
-    // add a very simple password regex here for testing purposes
-    const passwordRegex = /^.{4,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
     password.match(passwordRegex)
       ? (passwordError.value = "")
       : (passwordError.value =
