@@ -14,7 +14,7 @@
       <ClientOnly>
         <div class="flex space-x-4 w-full mt-32">
           <div
-            class="flex justify-center items-center bg-white w-full rounded-lg p-3 space-y-4"
+            class="bg-white w-full h-96 rounded-lg p-3 space-y-4 flex flex-col justify-center items-center"
           >
             <slot />
           </div>
