@@ -4,7 +4,6 @@ export default defineNuxtConfig({
   ssr: true,
   modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt"],
   app: {
-    // baseURL: '/star-citizen-tool/',
     head: {
       title: "Card-It",
       meta: [
@@ -14,31 +13,31 @@ export default defineNuxtConfig({
           hid: "description",
           name: "description",
           content:
-            "In Star Citizen Tool you can find all the information about the ships in Star Citizen.",
+            "Create your cards, test your memory and remember it!",
         },
-        { name: "keywords", content: "Star Citizen, Ships, Information" },
+        { name: "keywords", content: "card-it" },
         { property: "og:title", content: "Card-It" },
         {
           property: "og:description",
           content:
-            "In Star Citizen Tool you can find all the information about the ships in Star Citizen.",
+            "Create your cards, test your memory and remember it!",
         },
-        { property: "og:image", content: "/star-citizen-banner.webp" },
-        // { property: 'og:url', content: 'URL_TO_YOUR_PAGE' },
+        { property: "og:image", content: "/card-it-screen.jpg" },
+        { property: 'og:url', content: 'https://card-it-frontend.onrender.com/' },
         {
           name: "twitter:card",
-          content: "All the information about the ships in Star Citizen.",
+          content: "Create your cards, test your memory and remember it!",
         },
         { name: "twitter:site", content: "@vivieng_webdev" },
         { name: "twitter:title", content: "Card-It" },
         {
           name: "twitter:description",
           content:
-            "In Star Citizen Tool you can find all the information about the ships in Star Citizen.",
+            "Create your cards, test your memory and remember it!",
         },
         {
           name: "twitter:image",
-          content: "https://www.yourwebsite.com/star-citizen-banner.webp",
+          content: "https://card-it-frontend.onrender.com/card-it-screen.jpg",
         },
       ],
       link: [
