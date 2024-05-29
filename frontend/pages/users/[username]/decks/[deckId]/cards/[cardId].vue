@@ -191,7 +191,7 @@ onMounted(() => {
             {{ updateCardError || updateCardSuccess }}
           </div>
 
-          <label for="title" class="text-sm font-light">Card Name</label>
+          <label for="title" class="text-sm font-light">Card Title</label>
           <input
             type="text"
             id="title"
