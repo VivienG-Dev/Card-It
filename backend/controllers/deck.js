@@ -46,7 +46,10 @@ exports.getOneDeck = async (req, res, next) => {
       throw new NotFoundError("User not found");
     }
 
-    let deck = await Deck.findOne({ where: { id: deckId, user_id: userId } });
+    let deck = await Deck.findOne({
+      where: { id: deckId, user_id: userId },
+      attributes: ["title", "color"],
+    });
     if (!deck) {
       throw new NotFoundError("Deck not found");
     }
@@ -83,7 +86,9 @@ exports.updateDeck = async (req, res, next) => {
       throw new NotFoundError("User not found");
     }
 
-    let deck = await Deck.findOne({ where: { id: deckId, user_id: userId } });
+    let deck = await Deck.findOne({
+      where: { id: deckId, user_id: userId },
+    });
     if (!deck) {
       throw new NotFoundError("Deck not found");
     }
