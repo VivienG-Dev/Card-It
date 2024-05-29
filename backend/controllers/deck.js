@@ -71,6 +71,13 @@ exports.updateDeck = async (req, res, next) => {
       throw new RequestError("The title is missing!");
     }
 
+    const maxLength = 30;
+    if (title.length > maxLength) {
+      throw new RequestError(
+        `The title cannot exceed ${maxLength} characters.`
+      );
+    }
+
     let user = await User.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundError("User not found");
