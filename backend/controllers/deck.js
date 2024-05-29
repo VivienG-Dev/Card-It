@@ -3,7 +3,11 @@ const User = db.User;
 const Deck = db.Deck;
 const Card = db.Card;
 
-const { UserError, NotFoundError, RequestError } = require("../helpers/errors/customError");
+const {
+  UserError,
+  NotFoundError,
+  RequestError,
+} = require("../helpers/errors/customError");
 
 exports.getAllDecks = async (req, res, next) => {
   let userId = req.userId;
@@ -18,7 +22,10 @@ exports.getAllDecks = async (req, res, next) => {
       throw new RequestError("Email verification is required to access decks.");
     }
 
-    let decks = await Deck.findAll({ where: { user_id: userId } });
+    let decks = await Deck.findAll({
+      where: { user_id: userId },
+      attributes: ["id", "title", "color"],
+    });
     return res.json({ data: decks });
   } catch (err) {
     next(err);
@@ -80,7 +87,10 @@ exports.updateDeck = async (req, res, next) => {
       await deck.save();
 
       // Update the title and color of all cards in the deck
-      await Card.update({ deck_title: title, deck_color: color }, { where: { deck_id: deckId } });
+      await Card.update(
+        { deck_title: title, deck_color: color },
+        { where: { deck_id: deckId } }
+      );
     } else {
       throw new RequestError("No changes detected");
     }
@@ -101,11 +111,15 @@ exports.createDeck = async (req, res, next) => {
 
     const maxLength = 30;
     if (title.length > maxLength) {
-      throw new RequestError(`The title cannot exceed ${maxLength} characters.`);
+      throw new RequestError(
+        `The title cannot exceed ${maxLength} characters.`
+      );
     }
 
     if (color && !/^#[0-9A-Fa-f]{6}$/.test(color)) {
-      throw new RequestError("Invalid color format. Please use hex format (e.g., #141A1F).");
+      throw new RequestError(
+        "Invalid color format. Please use hex format (e.g., #141A1F)."
+      );
     }
 
     let user = await User.findOne({ where: { id: userId } });
@@ -206,7 +220,10 @@ exports.acceptSharedDeck = async (req, res, next) => {
       await Promise.all(cardPromises);
     }
 
-    return res.json({ message: "Deck copied successfully", newDeckId: newDeck.id });
+    return res.json({
+      message: "Deck copied successfully",
+      newDeckId: newDeck.id,
+    });
   } catch (err) {
     next(err);
   }
