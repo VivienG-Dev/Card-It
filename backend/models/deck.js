@@ -17,7 +17,7 @@ module.exports = (sequelize) => {
         primaryKey: true,
       },
       title: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(30),
         defaultValue: "",
         allowNull: false,
       },
