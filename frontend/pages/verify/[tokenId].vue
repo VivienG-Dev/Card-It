@@ -1,4 +1,8 @@
 <script setup>
+definePageMeta({
+  layout: "public",
+});
+
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 
