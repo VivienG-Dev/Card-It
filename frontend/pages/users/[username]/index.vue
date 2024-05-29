@@ -28,7 +28,7 @@ watch(pending, (isLoading) => {
 });
 
 watch(error, (fetchError) => {
-  deckState.error = fetchError?.message || null;
+  deckState.error = fetchError?.data.message || null;
 });
 
 const {
