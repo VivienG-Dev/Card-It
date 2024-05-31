@@ -6,78 +6,35 @@ const route = useRoute();
 
 const username = route.params.username;
 
-const deckState = reactive({
-  decks: [],
-  error: null,
-  loading: false,
-});
-
-const apiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks`;
-const { data, pending, error } = useFetch(apiUrl, {
-  credentials: "include",
-  cache: "no-cache",
-});
-
-// Using watch to reactively update state
-watch(data, (newData) => {
-  deckState.decks = newData?.data || [];
-});
-
-watch(pending, (isLoading) => {
-  deckState.loading = isLoading;
-});
-
-watch(error, (fetchError) => {
-  deckState.error = fetchError?.data.message || null;
-});
+// Fetch decks details
+const decksApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks`;
+const deckState = useApiFetch(decksApiUrl);
 
 const {
   isVisible: isModalAcceptSharedDeckVisible,
   toggle: toggleModalAcceptSharedDeck,
 } = useModal();
+
+// Accept shared deck
 const token = ref("");
-function acceptSharedDeck() {
-  fetch(
-    `${import.meta.env.VITE_API_URL}/users/${username}/decks/accept-share/${
-      token.value
-    }`,
-    {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ token: token }),
-    }
-  )
-    .then((response) => {
-      if (!response.ok) {
-        return response.json().then((body) => {
-          const error = new Error(
-            body.error?.message || "Unknown error occurred"
-          );
-          error.statusCode = body.error?.statusCode;
-          throw error;
-        });
-      }
-      return response.json();
-    })
-    .then(() => {
-      return fetchDecks(
-        `${import.meta.env.VITE_API_URL}/users/${username}/decks`,
-        deckState
-      );
-    })
-    .then((data) => {
-      deckState.decks = data.data;
-      toggleModalAcceptSharedDeck();
-      token.value = "";
-      deckState.error = null;
-    })
-    .catch((err) => {
-      deckState.error = err.statusCode;
-    });
-}
+const acceptSharedDeck = async () => {
+  const acceptShareUrl = `${
+    import.meta.env.VITE_API_URL
+  }/users/${username}/decks/accept-share/${token.value}`;
+  const acceptShareState = await $fetchApi(acceptShareUrl, {
+    method: "PUT",
+    body: JSON.stringify({ token: token.value }),
+  });
+
+  if (acceptShareState.data) {
+    const deckState = useApiFetch(decksApiUrl);
+    toggleModalAcceptSharedDeck();
+    token.value = "";
+    deckState.error = null;
+  } else if (acceptShareState.error) {
+    deckState.error = acceptShareState.error;
+  }
+};
 </script>
 
 <template>
@@ -143,7 +100,7 @@ function acceptSharedDeck() {
       </div>
     </nuxt-link>
     <Deck
-      v-for="deck in deckState.decks"
+      v-for="deck in deckState.data"
       :key="deck.title"
       :title="deck.title"
       :color="deck.color"
