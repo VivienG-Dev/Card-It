@@ -1,108 +1,56 @@
 <script setup>
-// definePageMeta({
-//   middleware: "auth",
-// });
-
 import { useRoute } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
+import { useApiFetch } from "~/composables/useApiFetch";
 
 const route = useRoute();
 
-const username = ref(route.params.username);
+const username = route.params.username;
 const deckId = ref(route.params.deckId);
 
+// Go back
 function goBack() {
-  navigateTo(`/users/${username.value}`);
+  navigateTo(`/users/${username}`);
 }
 
+// Modal
 const showModalGenerateShareLink = ref(false);
 function toggleModalGenerateShareLink() {
   showModalGenerateShareLink.value = !showModalGenerateShareLink.value;
   copyTokenSuccess.value = "";
 }
 
-const deckState = reactive({
-  details: [],
-  error: null,
-  loading: false,
-});
-const cardsState = reactive({
-  details: [],
-  error: null,
-  loading: false,
-});
-function fetchData(url, state) {
-  state.loading = true;
-  fetch(url, {
-    method: "GET",
-    credentials: "include",
-    // cache: "force-cache",
-  })
-    .then((response) => {
-      if (!response.ok) {
-        return response.json().then((body) => {
-          const errorMessage = body.error?.message || "Unknown error occurred";
-          throw new Error(errorMessage);
-        });
-      }
-      return response.json();
-    })
-    .then((data) => {
-      if (data) {
-        state.details = data.data;
-      }
-    })
-    .catch((err) => {
-      state.error = err.message;
-    })
-    .finally(() => {
-      state.loading = false;
-    });
-}
-onMounted(() => {
-  fetchData(
-    `${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${
-      deckId.value
-    }`,
-    deckState
-  );
-  fetchData(
-    `${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${
-      deckId.value
-    }/cards`,
-    cardsState
-  );
-});
+// Fetch deck detail
+const deckApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/${
+  deckId.value
+}`;
+const deckState = useApiFetch(deckApiUrl);
 
+// Fetch cards details
+const cardsApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/${
+  deckId.value
+}/cards`;
+const cardsState = useApiFetch(cardsApiUrl);
+
+// Generate share link
 const generatedLink = ref("");
-function generateShareLink() {
-  fetch(
-    `${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${
-      deckId.value
-    }/generate-share-link`,
-    {
-      method: "PATCH",
-      credentials: "include",
-    }
-  )
-    .then((response) => {
-      if (!response.ok) {
-        return response.json().then((body) => {
-          const errorMessage = body.error?.message || "Unknown error occurred";
-          throw new Error(errorMessage);
-        });
-      }
-      return response.json();
-    })
-    .then((link) => {
-      generatedLink.value = link.shareToken;
-      toggleModalGenerateShareLink();
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+const generateShareLinkApiUrl = `${
+  import.meta.env.VITE_API_URL
+}/users/${username}/decks/${deckId.value}/generate-share-link`;
+async function generateShareLink() {
+  const generateShareLinkState = await $fetchApi(generateShareLinkApiUrl, {
+    method: "PATCH",
+  });
+  if (generateShareLinkState.data) {
+    generatedLink.value = generateShareLinkState.data.shareToken;
+    toggleModalGenerateShareLink();
+  }
+  if (generateShareLinkState.error) {
+    console.error(generateShareLinkState.error);
+  }
 }
 
+// Copy token
 const copyTokenSuccess = ref("");
 function copyToken() {
   navigator.clipboard.writeText(generatedLink.value);
@@ -124,7 +72,9 @@ function copyToken() {
   </div>
 
   <div class="flex flex-col sm:flex-row justify-between">
-    <p>{{ deckState.details.title ? deckState.details.title + ":" : "" }}</p>
+    <h2>
+      {{ deckState.data?.title ? deckState.data.title + ":" : "" }}
+    </h2>
     <div>
       <div class="space-x-2">
         <button
@@ -163,7 +113,12 @@ function copyToken() {
       </Modal>
     </div>
   </div>
-  <div v-if="cardsState.loading">Loading...</div>
+  <div
+    v-if="cardsState.loading || deckState.loading"
+    class="flex justify-center items-center h-64"
+  >
+    Loading...
+  </div>
   <div
     v-else-if="cardsState.error && cardsState.error !== 404"
     class="bg-white flex flex-col space-y-4 justify-center items-center p-10"
@@ -183,7 +138,7 @@ function copyToken() {
       </div>
     </nuxt-link>
     <Card
-      v-for="card in cardsState.details"
+      v-for="card in cardsState.data"
       :key="card.id"
       :title="card.title"
       :description="card.description"
