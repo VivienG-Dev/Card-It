@@ -287,3 +287,66 @@ exports.resetPassword = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.demoSignIn = async (req, res, next) => {
+  try {
+    const demoUser = await User.findOne({
+      where: { username: "demo" },
+      raw: true,
+    });
+
+    if (!demoUser) {
+      throw new Error("Demo user not found");
+    }
+
+    const token = jwt.sign(
+      {
+        id: demoUser.id,
+        username: demoUser.username,
+        email: demoUser.email,
+        emailVerified: demoUser.emailVerified,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_DEMO_ACCOUNT_EXPIRES_IN,
+      }
+    );
+
+    const refreshToken = jwt.sign(
+      {
+        id: demoUser.id,
+        username: demoUser.username,
+        email: demoUser.email,
+        emailVerified: demoUser.emailVerified,
+      },
+      process.env.REFRESH_TOKEN_SECRET,
+      {
+        expiresIn: process.env.REFRESH_TOKEN_DEMO_ACCOUNT_EXPIRES_IN,
+      }
+    );
+
+    res.cookie("authToken", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 60 * 60 * 1000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    return res.json({
+      message: "Demo user logged in",
+      user: {
+        username: demoUser.username,
+        emailVerified: demoUser.emailVerified,
+      },
+    });
+  } catch (error) {
+    next(err);
+  }
+};
