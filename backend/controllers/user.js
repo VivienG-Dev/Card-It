@@ -4,7 +4,6 @@ const User = db.User;
 const Card = db.Card;
 
 const { UserError, NotFoundError } = require("../helpers/errors/customError");
-// const { use } = require("../routes/users");
 
 exports.getAllUsers = (req, res, next) => {
   User.findAll()
@@ -67,6 +66,13 @@ exports.updateUserData = async (req, res, next) => {
     let user = await User.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundError("User not found");
+    }
+
+    if (
+      user.username === "demo" &&
+      user.id === "6ac336cf-ba7b-49b0-8aae-a7ba8bd11dfa"
+    ) {
+      throw new UserError("Demo user cannot be updated");
     }
 
     const hashedPassword = password
