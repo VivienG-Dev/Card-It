@@ -29,4 +29,6 @@ router.get("/check", checkTokenMiddleware, authController.checkToken);
 
 router.post("/refresh", authController.refreshToken);
 
+router.post("/demo-sign-in", authController.demoSignIn);
+
 module.exports = router;
