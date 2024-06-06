@@ -229,6 +229,20 @@ const links = computed(() => [
   { name: "Profile", path: `/users/${username.value}/profile` },
   { name: "Favorites", path: `/users/${username.value}/favorites` },
 ]);
+
+async function goToDemoAccount() {
+  const demoAccountUrl = `${import.meta.env.VITE_API_URL}/auth/demo-sign-in`;
+  const demoAccountState = await $fetchApi(demoAccountUrl, {
+    method: "POST",
+  });
+
+  if (demoAccountState.data) {
+    localStorage.setItem("username", demoAccountState.data.user.username);
+    window.location.href = `/users/${demoAccountState.data.user.username}`;
+  } else if (demoAccountState.error) {
+    console.error("Error signing in as demo user:", demoAccountState.error);
+  }
+}
 </script>
 
 <template>
@@ -260,6 +274,12 @@ const links = computed(() => [
             </button>
           </div>
           <div v-else class="space-x-4 font-light flex">
+            <button
+              class="px-2 py-1 bg-customPrimary rounded-lg text-white"
+              @click="goToDemoAccount()"
+            >
+              Demo Account
+            </button>
             <button @click="openModal(true)">Register</button>
             <button @click="openModal(false)">Login</button>
           </div>
