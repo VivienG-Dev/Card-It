@@ -37,47 +37,27 @@ const props = defineProps({
   },
 });
 
+const emits = defineEmits(["favorite-toggled"]);
+
 const isFlipped = ref(false);
 const isHovered = ref(false);
 
 const isCardFavorite = ref(props.isFavorite);
-function toggleFavorite() {
-  const error = ref(null);
-  const loading = ref(true);
 
-  fetch(
-    `${import.meta.env.VITE_API_URL}/users/${props.username}/decks/${
-      props.deckId
-    }/cards/${props.cardId}/favorite`,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }
-  )
-    .then((response) => {
-      if (!response.ok) {
-        return response.json().then((body) => {
-          const errorMessage =
-            body.error?.message ||
-            response.statusText ||
-            "Unknown error occurred";
-          throw new Error(errorMessage);
-        });
-      }
-      return response.json();
-    })
-    .then((_) => {
-      isCardFavorite.value = !isCardFavorite.value;
-    })
-    .catch((err) => {
-      error.value = err.message;
-    })
-    .finally(() => {
-      loading.value = false;
-    });
+async function toggleFavorite() {
+  const toggleFavoriteUrl = `${import.meta.env.VITE_API_URL}/users/${
+    props.username
+  }/decks/${props.deckId}/cards/${props.cardId}/favorite`;
+  const toggleFavoritetState = await $fetchApi(toggleFavoriteUrl, {
+    method: "PATCH",
+  });
+
+  if (toggleFavoritetState.data) {
+    isCardFavorite.value = !isCardFavorite.value;
+    emits("favorite-toggled", props.cardId);
+  } else if (toggleFavoritetState.error) {
+    console.error("Error toggling favorite:", toggleFavoritetState.error);
+  }
 }
 </script>
 
