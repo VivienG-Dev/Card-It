@@ -3,48 +3,24 @@ definePageMeta({
   layout: "public",
 });
 
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
 
 const tokenId = ref(route.params.tokenId);
-const loading = ref(false);
-const error = ref(null);
 const verified = ref(false);
+const error = ref(null);
 
-function emailVerifyWithToken(url) {
-  loading.value = true;
-  fetch(url, {
-    method: "GET",
-    credentials: "include",
-  })
-    .then((response) => {
-      if (!response.ok) {
-        return response.json().then((body) => {
-          const errorMessage = body.error?.message || "Unknown error occurred";
-          throw new Error(errorMessage);
-        });
-      }
-      return response.json();
-    })
-    .then((_) => {
-      verified.value = true;
-      localStorage.setItem("emailVerified", true);
-      // navigateTo("/");
-    })
-    .catch((err) => {
-      error.value = err.message;
-    })
-    .finally(() => {
-      loading.value = false;
-    });
-}
+const emailVerifyApiUrl = `${import.meta.env.VITE_API_URL}/auth/verify/${tokenId.value}`;
+const emailVerifyState = useApiFetch(emailVerifyApiUrl);
 
-onMounted(() => {
-  emailVerifyWithToken(
-    `${import.meta.env.VITE_API_URL}/auth/verify/${tokenId.value}`
-  );
+watch(emailVerifyState, (newState) => {
+  if (newState.data) {
+    verified.value = true;
+  } else if (newState.error) {
+    error.value = newState.error;
+  }
 });
 </script>
 
@@ -52,11 +28,11 @@ onMounted(() => {
   <div class="flex justify-center items-center h-full">
     <div class="flex flex-col items-center">
       <h1>Email Verification</h1>
-      <p v-if="loading">Verifying email...</p>
+      <p v-if="emailVerifyState.loading">Verifying email...</p>
       <p v-if="verified">
         Your email has been successfully verified. You may now log in.
       </p>
-      <p v-else>{{ errorMessage }}</p>
+      <p v-else>{{ emailVerifyState.error }}</p>
     </div>
   </div>
 </template>
