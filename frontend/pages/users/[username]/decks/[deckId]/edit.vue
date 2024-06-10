@@ -23,9 +23,12 @@ const error = ref(null);
 const loading = ref(false);
 async function deleteDeck() {
   toggleModal();
-  const result = await deleteData(`users/${username}/decks/${deckId}`);
-  error.value = result?.error;
-  loading.value = result?.loading;
+  const deleteDeckApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/${deckId}`;
+  const deleteDeckState = await $fetchApi(deleteDeckApiUrl, {
+    method: "DELETE",
+  });
+  error.value = deleteDeckState?.error;
+  loading.value = deleteDeckState?.loading;
   router.push(`/users/${username}`);
 }
 
