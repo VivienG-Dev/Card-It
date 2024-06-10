@@ -52,6 +52,9 @@ async function updateUserProfile() {
 
   if (!updateUserProfileState.error) {
     updateUserProfileError.value = null;
+    name.value = "";
+    password.value = "";
+
     updateUserProfileSuccess.value = updateUserProfileState.data.message;
   } else {
     updateUserProfileError.value = updateUserProfileState.error;
@@ -60,6 +63,12 @@ async function updateUserProfile() {
 
 const userDataApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}`;
 const userDataState = useApiFetch(userDataApiUrl);
+
+watch(name, (newName) => {
+  if (newName) {
+    userDataState.data.username = newName;
+  }
+});
 </script>
 
 <template>
