@@ -13,9 +13,6 @@ function goBack() {
 }
 
 const showModal = ref(false);
-function hideModal() {
-  showModal.value = true;
-}
 function toggleModal() {
   showModal.value = !showModal.value;
 }
