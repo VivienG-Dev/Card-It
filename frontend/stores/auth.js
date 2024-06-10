@@ -23,36 +23,47 @@ export const useAuthStore = defineStore("auth", {
           }
         );
 
-        if (!response.ok && response.status !== 401) {
+        if (!response.ok) {
           throw new Error("Response not OK");
         }
 
         const authStatus = await response.json();
 
-        if (!response.ok && response.status === 401) {
-          const refreshResponse = await fetch(
-            `${import.meta.env.VITE_API_URL}/auth/refresh`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include",
-            }
-          );
-
-          if (!refreshResponse.ok) {
-            throw new Error("Refresh token failed");
-          }
-
-          const refreshStatus = await refreshResponse.json();
-
-          if (refreshStatus.error) {
+        if (response.status === 401) {
+          if (
+            authStatus.error === "No token provided" ||
+            authStatus.error === "Invalid token" ||
+            authStatus.error === "Invalid token - ID not found"
+          ) {
             this.isAuthenticated = false;
+            this.logout();
             localStorage.removeItem("username");
+            navigateTo("/");
           } else {
-            this.isAuthenticated = true;
-            this.user.username = refreshStatus.username;
+            const refreshResponse = await fetch(
+              `${import.meta.env.VITE_API_URL}/auth/refresh`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                credentials: "include",
+              }
+            );
+
+            if (!refreshResponse.ok) {
+              throw new Error("Refresh token failed");
+            }
+
+            const refreshStatus = await refreshResponse.json();
+
+            if (refreshStatus.error) {
+              this.isAuthenticated = false;
+              localStorage.removeItem("username");
+            } else {
+              this.isAuthenticated = true;
+              this.user.username = refreshStatus.username;
+            }
           }
         } else if (response.ok) {
           this.isAuthenticated = true;
