@@ -1,18 +1,13 @@
 <script setup>
-// definePageMeta({
-//   middleware: "auth",
-// });
-
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
 
-const { titleError, descriptionError, validateTitle, validateDescription } =
-  useValidation();
+const { titleError, descriptionError, validateTitle, validateDescription } = useValidation();
 
-const username = ref(route.params.username);
-const deckId = ref(route.params.deckId);
+const username = route.params.username;
+const deckId = route.params.deckId;
 
 function goBack() {
   window.history.back();
@@ -21,45 +16,21 @@ function goBack() {
 const title = ref("");
 const description = ref("");
 const createCardError = ref(null);
-const createCardLoading = ref(false);
-function createCard() {
-  createCardError.value = null;
-  createCardLoading.value = true;
+async function createCard() {
+  const createCardApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/${deckId}/cards`;
+  const createCardState = await $fetchApi(createCardApiUrl, {
+    method: "PUT",
+    body: JSON.stringify({
+      title: title.value,
+      description: description.value,
+    }),
+  });
 
-  fetch(
-    `${import.meta.env.VITE_API_URL}/users/${username.value}/decks/${
-      deckId.value
-    }/cards`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: title.value,
-        description: description.value,
-      }),
-      credentials: "include",
-    }
-  )
-    .then((response) => {
-      if (!response.ok) {
-        return response.json().then((body) => {
-          const errorMessage = body.error?.message || "Unknown error occurred";
-          throw new Error(errorMessage);
-        });
-      }
-      return response.json();
-    })
-    .then((_) => {
-      navigateTo(`/users/${username.value}/decks/${deckId.value}/`);
-    })
-    .catch((err) => {
-      createCardError.value = err.message;
-    })
-    .finally(() => {
-      createCardLoading.value = false;
-    });
+  if (createCardState.data) {
+    navigateTo(`/users/${username}/decks/${deckId}/`);
+  } else if (createCardState.error) {
+    createCardError.value = createCardState.error;
+  }
 }
 </script>
 
@@ -67,29 +38,21 @@ function createCard() {
   <div class="flex flex-col space-y-16">
     <div class="flex justify-between">
       <div class="w-28">
-        <Icons
-          @click="goBack()"
-          svgClass="w-8 h-8 cursor-pointer"
-          isType="arrowLeft"
-        />
+        <Icons @click="goBack()" svgClass="w-8 h-8 cursor-pointer" isType="arrowLeft" />
       </div>
       <h2 class="text-center text-xl font-bold w-full">Create a card</h2>
       <div class="w-28" />
     </div>
     <div class="flex flex-col items-center w-full space-y-4">
-      <form
-        @submit.prevent="createCard()"
-        class="space-y-4 w-full sm:w-[450px]"
-      >
+      <form @submit.prevent="createCard()" class="space-y-4 w-full sm:w-[450px]">
         <div class="flex flex-col space-y-2">
           <div
             class="flex justify-center items-center w-full h-10 rounded-lg text-sm"
             :class="{
               'bg-red-100 text-red-500': createCardError,
-              'bg-green-100 text-green-500': updateCardSuccess,
             }"
           >
-            {{ createCardError || updateCardSuccess }}
+            {{ createCardError }}
           </div>
 
           <label for="title" class="text-sm font-light">Card Title</label>
@@ -101,8 +64,7 @@ function createCard() {
             @input="validateTitle(title)"
             class="border border-gray-300 rounded-lg p-2"
             :class="{
-              'border-red-500':
-                createCardError === 'Title cannot be empty' || titleError,
+              'border-red-500': createCardError === 'Title cannot be empty' || titleError,
             }"
           />
           <div class="text-red-500 text-xs text-center h-2">
@@ -110,9 +72,7 @@ function createCard() {
           </div>
         </div>
         <div class="flex flex-col space-y-2">
-          <label for="description" class="text-sm font-light"
-            >Card Description</label
-          >
+          <label for="description" class="text-sm font-light">Card Description</label>
           <textarea
             type="text"
             id="description"
@@ -121,8 +81,7 @@ function createCard() {
             @input="validateDescription(description)"
             class="border border-gray-300 rounded-lg p-2"
             :class="{
-              'border-red-500':
-                createCardError === 'Description cannot be empty' || titleError,
+              'border-red-500': createCardError === 'Description cannot be empty' || titleError,
             }"
           />
           <div class="text-red-500 text-xs text-center h-2">
