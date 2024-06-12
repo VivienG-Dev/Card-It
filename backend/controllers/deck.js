@@ -3,11 +3,7 @@ const User = db.User;
 const Deck = db.Deck;
 const Card = db.Card;
 
-const {
-  UserError,
-  NotFoundError,
-  RequestError,
-} = require("../helpers/errors/customError");
+const { UserError, NotFoundError, RequestError } = require("../helpers/errors/customError");
 
 exports.getAllDecks = async (req, res, next) => {
   let userId = req.userId;
@@ -76,9 +72,7 @@ exports.updateDeck = async (req, res, next) => {
 
     const maxLength = 30;
     if (title.length > maxLength) {
-      throw new RequestError(
-        `The title cannot exceed ${maxLength} characters.`
-      );
+      throw new RequestError(`The title cannot exceed ${maxLength} characters.`);
     }
 
     let user = await User.findOne({ where: { id: userId } });
@@ -99,10 +93,7 @@ exports.updateDeck = async (req, res, next) => {
       await deck.save();
 
       // Update the title and color of all cards in the deck
-      await Card.update(
-        { deck_title: title, deck_color: color },
-        { where: { deck_id: deckId } }
-      );
+      await Card.update({ deck_title: title, deck_color: color }, { where: { deck_id: deckId } });
     } else {
       throw new RequestError("No changes detected");
     }
@@ -123,15 +114,11 @@ exports.createDeck = async (req, res, next) => {
 
     const maxLength = 30;
     if (title.length > maxLength) {
-      throw new RequestError(
-        `The title cannot exceed ${maxLength} characters.`
-      );
+      throw new RequestError(`The title cannot exceed ${maxLength} characters.`);
     }
 
     if (color && !/^#[0-9A-Fa-f]{6}$/.test(color)) {
-      throw new RequestError(
-        "Invalid color format. Please use hex format (e.g., #141A1F)."
-      );
+      throw new RequestError("Invalid color format. Please use hex format (e.g., #141A1F).");
     }
 
     let user = await User.findOne({ where: { id: userId } });
@@ -247,7 +234,7 @@ exports.deleteDeck = async (req, res, next) => {
 
   try {
     await Deck.destroy({ where: { id: deckId }, force: true });
-    return res.status(204).json({ message: "Deck deleted" });
+    return res.json({ message: "Deck deleted" });
   } catch (err) {
     next(err);
   }
