@@ -27,9 +27,13 @@ async function deleteDeck() {
   const deleteDeckState = await $fetchApi(deleteDeckApiUrl, {
     method: "DELETE",
   });
-  error.value = deleteDeckState?.error;
-  loading.value = deleteDeckState?.loading;
-  router.push(`/users/${username}`);
+
+  if (deleteDeckState.data) {
+    router.push(`/users/${username}`);
+  } else {
+    error.value = deleteDeckState?.error;
+    loading.value = deleteDeckState?.loading;
+  }
 }
 
 const title = ref("");
