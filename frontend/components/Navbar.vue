@@ -371,6 +371,7 @@ async function goToDemoAccount() {
             </form>
           </div>
 
+          <!-- Demo Account -->
           <div v-else-if="showDemoLogin">
             <h2 class="text-lg text-center font-semibold text-gray-800">Demo Account</h2>
             <div class="flex justify-center items-center w-full h-10 rounded-lg text-sm">
