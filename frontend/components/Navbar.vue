@@ -24,14 +24,7 @@ const {
   errorResponse: errorResponseSignIn,
 } = useSignIn();
 
-const {
-  usernameError,
-  emailError,
-  passwordError,
-  validateUsername,
-  validateEmail,
-  validatePassword,
-} = useValidation();
+const { usernameError, emailError, passwordError, validateUsername, validateEmail, validatePassword } = useValidation();
 
 watch(
   () => route.query.modal,
@@ -48,6 +41,7 @@ watch(
 
 const isModalOpen = ref(false);
 const showRegisterForm = ref(false);
+const showDemoLogin = ref(false);
 const usernameRef = ref(null);
 const emailRef = ref(null);
 const openModal = (isRegister) => {
@@ -96,47 +90,40 @@ function useRegister() {
 
   const register = async () => {
     if (isLoading.value) {
-      errorResponse.value =
-        "Loading, please wait while my free account from render.com restarts...";
+      errorResponse.value = "Loading, please wait while my free account from render.com restarts...";
       return;
     }
 
     isLoading.value = true;
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/auth/register`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: username.value.toLowerCase(),
-            email: email.value,
-            password: password.value,
-          }),
-        }
-      );
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username.value.toLowerCase(),
+          email: email.value,
+          password: password.value,
+        }),
+      });
 
       const responseData = await response.json();
 
       if (authStore.isLoading) {
-        errorResponse.value =
-          "Loading, please wait while my free instance on Render.com restarts...";
+        errorResponse.value = "Loading, please wait while my free instance on Render.com restarts...";
       }
 
       if (response.ok) {
         errorResponse.value = "";
-        successfulResponse.value =
-          responseData.message || "Registration successful!";
+        successfulResponse.value = responseData.message || "Registration successful!";
         setTimeout(() => {
           router.push(`/?modal=login`);
         }, 2000);
       } else {
         successfulResponse.value = "";
-        errorResponse.value =
-          responseData.message || "An error occurred. Please try again.";
+        errorResponse.value = responseData.message || "An error occurred. Please try again.";
       }
     } catch (error) {
       errorResponse.value = "Registration failed. Please try again.";
@@ -165,28 +152,24 @@ function useSignIn() {
 
   const signIn = async () => {
     if (isLoading.value) {
-      errorResponse.value =
-        "Loading, please wait while my free account from render.com restarts...";
+      errorResponse.value = "Loading, please wait while my free account from render.com restarts...";
       return;
     }
 
     isLoading.value = true;
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/auth/sign-in`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email.value,
-            password: password.value,
-          }),
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/sign-in`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email.value,
+          password: password.value,
+        }),
+        credentials: "include",
+      });
 
       const responseData = await response.json();
 
@@ -197,8 +180,7 @@ function useSignIn() {
         localStorage.setItem("username", responseData.user.username);
         router.push(`/users/${responseData.user.username}`);
       } else {
-        errorResponse.value =
-          responseData.message || "An error occurred. Please try again.";
+        errorResponse.value = responseData.message || "An error occurred. Please try again.";
       }
     } catch (error) {
       errorResponse.value = "Login failed. Please try again.";
@@ -230,63 +212,50 @@ const links = computed(() => [
   { name: "Favorites", path: `/users/${username.value}/favorites` },
 ]);
 
+const demoSignInError = ref(null);
 async function goToDemoAccount() {
-  const demoAccountUrl = `${import.meta.env.VITE_API_URL}/auth/demo-sign-in`;
-  const demoAccountState = await $fetchApi(demoAccountUrl, {
+  const demoAccountApiUrl = `${import.meta.env.VITE_API_URL}/auth/demo-sign-in`;
+  const demoAccountState = await $fetchApi(demoAccountApiUrl, {
     method: "POST",
   });
+
+  if (authStore.isLoading) {
+    showDemoLogin.value = true;
+    isModalOpen.value = true;
+  }
 
   if (demoAccountState.data) {
     localStorage.setItem("username", demoAccountState.data.user.username);
     window.location.href = `/users/${demoAccountState.data.user.username}`;
   } else if (demoAccountState.error) {
-    console.error("Error signing in as demo user:", demoAccountState.error);
+    demoSignInError.value = demoAccountState.error;
   }
 }
 </script>
 
 <template>
   <div>
-    <nav
-      class="flex items-center justify-between bg-white shadow h-10 rounded-lg py-2 px-4"
-    >
+    <nav class="flex items-center justify-between bg-white shadow h-10 rounded-lg py-2 px-4">
       <nuxt-link to="/">Card-It</nuxt-link>
       <ClientOnly>
         <div class="relative">
-          <div
-            v-if="authStore.isAuthenticated"
-            class="flex space-x-4 space-y-1 font-light"
-          >
-            <button
-              @click="toggleMenu"
-              class="focus:outline-none flex sm:hidden"
-            >
-              <Icons
-                :isType="isMenuOpen ? 'closeMenu' : 'menu'"
-                svgClass="w-7 h-7"
-              />
+          <div v-if="authStore.isAuthenticated" class="flex space-x-4 space-y-1 font-light">
+            <button @click="toggleMenu" class="focus:outline-none flex sm:hidden">
+              <Icons :isType="isMenuOpen ? 'closeMenu' : 'menu'" svgClass="w-7 h-7" />
             </button>
             <div class="hidden sm:flex space-x-4">
               <nuxt-link :to="`/users/${username}`">Dashboard</nuxt-link>
             </div>
-            <button class="hidden sm:flex" @click="authStore.logout">
-              Logout
-            </button>
+            <button class="hidden sm:flex" @click="authStore.logout">Logout</button>
           </div>
           <div v-else class="space-x-4 font-light flex">
-            <button
-              class="px-2 py-1 bg-customPrimary rounded-lg text-white"
-              @click="goToDemoAccount()"
-            >
+            <button class="px-2 py-1 bg-customPrimary rounded-lg text-white" @click="goToDemoAccount()">
               Demo Account
             </button>
             <button @click="openModal(true)">Register</button>
             <button @click="openModal(false)">Login</button>
           </div>
-          <div
-            v-if="isMenuOpen"
-            class="absolute -right-3 mt-3 w-48 rounded-md shadow-lg bg-white z-50"
-          >
+          <div v-if="isMenuOpen" class="absolute -right-3 mt-3 w-48 rounded-md shadow-lg bg-white z-50">
             <div v-if="authStore.isAuthenticated" class="py-1">
               <nuxtLink
                 v-for="link in links"
@@ -316,19 +285,11 @@ async function goToDemoAccount() {
 
       <!-- Modal content -->
       <div class="fixed inset-0 flex items-center justify-center p-4">
-        <div
-          class="bg-white rounded-lg shadow-lg py-3 px-14 w-[500px] h-[500px] mx-auto relative"
-        >
-          <Icons
-            @click="closeModal"
-            svgClass="w-7 h-7 absolute top-2 right-2"
-            isType="close"
-          />
+        <div class="bg-white rounded-lg shadow-lg py-3 px-14 w-[500px] h-[500px] mx-auto relative">
+          <Icons @click="closeModal" svgClass="w-7 h-7 absolute top-2 right-2" isType="close" />
           <!-- Register Form -->
           <div v-if="showRegisterForm" class="flex flex-col">
-            <h2 class="text-lg text-center font-semibold text-gray-800">
-              Create a new account
-            </h2>
+            <h2 class="text-lg text-center font-semibold text-gray-800">Create a new account</h2>
             <div
               class="flex justify-center items-center w-full h-10 rounded-lg text-sm"
               :class="{
@@ -340,9 +301,7 @@ async function goToDemoAccount() {
             </div>
             <form @submit.prevent="register" class="space-y-4">
               <div>
-                <label for="Username" class="font-normal text-sm mb-10"
-                  >Username:</label
-                >
+                <label for="Username" class="font-normal text-sm mb-10">Username:</label>
                 <input
                   type="text"
                   placeholder="Username"
@@ -352,9 +311,7 @@ async function goToDemoAccount() {
                   @input="validateUsername(usernameRegister)"
                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   :class="{
-                    'border-red-500':
-                      usernameError ||
-                      (errorResponseRegister && usernameRegister === ''),
+                    'border-red-500': usernameError || (errorResponseRegister && usernameRegister === ''),
                   }"
                 />
                 <div class="text-red-500 text-xs text-center h-2">
@@ -371,9 +328,7 @@ async function goToDemoAccount() {
                   @input="validateEmail(emailRegister)"
                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   :class="{
-                    'border-red-500':
-                      emailError ||
-                      (errorResponseRegister && emailRegister === ''),
+                    'border-red-500': emailError || (errorResponseRegister && emailRegister === ''),
                   }"
                 />
                 <div class="text-red-500 text-xs text-center h-2">
@@ -381,9 +336,7 @@ async function goToDemoAccount() {
                 </div>
               </div>
               <div>
-                <label for="Password" class="font-normal text-sm"
-                  >Password:</label
-                >
+                <label for="Password" class="font-normal text-sm">Password:</label>
                 <div class="relative flex items-center">
                   <input
                     id="Password"
@@ -393,9 +346,7 @@ async function goToDemoAccount() {
                     @input="validatePassword(passwordRegister)"
                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     :class="{
-                      'border-red-500':
-                        passwordErrorRegister ||
-                        (errorResponseRegister && passwordRegister === ''),
+                      'border-red-500': passwordErrorRegister || (errorResponseRegister && passwordRegister === ''),
                     }"
                   />
                   <Icons
@@ -415,20 +366,24 @@ async function goToDemoAccount() {
               </div>
               <p class="text-sm text-center font-extralight">
                 Already have an account?
-                <NuxtLink
-                  to="/?modal=login"
-                  class="underline underline-offset-2"
-                  >Sign-In
-                </NuxtLink>
+                <NuxtLink to="/?modal=login" class="underline underline-offset-2">Sign-In </NuxtLink>
               </p>
             </form>
           </div>
 
+          <div v-else-if="showDemoLogin">
+            <h2 class="text-lg text-center font-semibold text-gray-800">Demo Account</h2>
+            <div class="flex justify-center items-center w-full h-10 rounded-lg text-sm">
+              <p v-if="demoSignInError">
+                {{ demoSignInError }}
+              </p>
+              <p v-else>Loading, please wait while my free account from render.com restarts...</p>
+            </div>
+          </div>
+
           <!-- Login Form -->
           <div v-else class="space-y-4">
-            <h2 class="text-lg text-center font-semibold text-gray-800">
-              Sign-In
-            </h2>
+            <h2 class="text-lg text-center font-semibold text-gray-800">Sign-In</h2>
             <div
               class="flex justify-center items-center w-full h-10 rounded-lg text-sm"
               :class="{
@@ -449,8 +404,7 @@ async function goToDemoAccount() {
                   @input="validateEmail(emailSignIn)"
                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   :class="{
-                    'border-red-500':
-                      emailError || (errorResponseSignIn && emailSignIn === ''),
+                    'border-red-500': emailError || (errorResponseSignIn && emailSignIn === ''),
                   }"
                 />
                 <div class="text-red-500 text-xs text-center h-4">
@@ -468,9 +422,7 @@ async function goToDemoAccount() {
                     @input="validatePassword(passwordSignIn)"
                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     :class="{
-                      'border-red-500':
-                        passwordError ||
-                        (errorResponseSignIn && passwordSignIn === ''),
+                      'border-red-500': passwordError || (errorResponseSignIn && passwordSignIn === ''),
                     }"
                   />
                   <Icons
@@ -489,18 +441,10 @@ async function goToDemoAccount() {
               </div>
               <p class="text-sm text-center font-extralight">
                 No account?
-                <NuxtLink
-                  to="/?modal=register"
-                  class="underline underline-offset-2"
-                  >Register</NuxtLink
-                >
+                <NuxtLink to="/?modal=register" class="underline underline-offset-2">Register</NuxtLink>
               </p>
               <p class="text-sm text-center font-extralight">
-                <NuxtLink
-                  to="/forgot-password"
-                  class="underline underline-offset-2"
-                  >Forgot password</NuxtLink
-                >
+                <NuxtLink to="/forgot-password" class="underline underline-offset-2">Forgot password</NuxtLink>
               </p>
             </form>
           </div>
