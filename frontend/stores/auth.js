@@ -12,44 +12,25 @@ export const useAuthStore = defineStore("auth", {
     async checkAuth() {
       this.isLoading = true;
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/auth/check`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Response not OK");
-        }
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/check`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
 
         const authStatus = await response.json();
 
         if (response.status === 401) {
-          if (
-            authStatus.error === "No token provided" ||
-            authStatus.error === "Invalid token" ||
-            authStatus.error === "Invalid token - ID not found"
-          ) {
-            this.isAuthenticated = false;
-            this.logout();
-            localStorage.removeItem("username");
-            navigateTo("/");
-          } else {
-            const refreshResponse = await fetch(
-              `${import.meta.env.VITE_API_URL}/auth/refresh`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                credentials: "include",
-              }
-            );
+          if (authStatus.error.message === "No token provided") {
+            const refreshResponse = await fetch(`${import.meta.env.VITE_API_URL}/auth/refresh`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            });
 
             if (!refreshResponse.ok) {
               throw new Error("Refresh token failed");
@@ -60,18 +41,29 @@ export const useAuthStore = defineStore("auth", {
             if (refreshStatus.error) {
               this.isAuthenticated = false;
               localStorage.removeItem("username");
+              navigateTo("/");
             } else {
               this.isAuthenticated = true;
               this.user.username = refreshStatus.username;
             }
+          } else if (
+            authStatus.error.message === "Invalid token" ||
+            authStatus.error.message === "Invalid token - ID not found"
+          ) {
+            // Handle the case where the token is invalid
+            this.isAuthenticated = false;
+            this.logout();
+            localStorage.removeItem("username");
+            navigateTo("/");
           }
-        } else if (response.ok) {
+        } else {
           this.isAuthenticated = true;
           this.user.username = authStatus.username;
         }
       } catch (error) {
         this.isAuthenticated = false;
         localStorage.removeItem("username");
+        navigateTo("/");
       } finally {
         this.isLoading = false;
       }
@@ -80,13 +72,10 @@ export const useAuthStore = defineStore("auth", {
       this.isAuthenticated = false;
 
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/auth/logout`,
-          {
-            method: "POST",
-            credentials: "include",
-          }
-        );
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+          method: "POST",
+          credentials: "include",
+        });
 
         if (response.ok) {
           localStorage.removeItem("username");
