@@ -1,18 +1,11 @@
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const {
-  sendVerificationEmail,
-  sendPasswordResetEmail,
-} = require("../helpers/mailer");
+const { sendVerificationEmail, sendPasswordResetEmail } = require("../helpers/mailer");
 
 const db = require("../db.config");
 const User = db.User;
 
-const {
-  NotFoundError,
-  RequestError,
-  AuthenticationError,
-} = require("../helpers/errors/customError");
+const { NotFoundError, RequestError, AuthenticationError } = require("../helpers/errors/customError");
 
 exports.register = async (req, res, next) => {
   let { email, username, password } = req.body;
@@ -41,10 +34,7 @@ exports.register = async (req, res, next) => {
       throw new AuthenticationError(`Email already exists`);
     }
 
-    let hashedPassword = await bcryptjs.hash(
-      password,
-      parseInt(process.env.BCRYPT_SALT_ROUNDS)
-    );
+    let hashedPassword = await bcryptjs.hash(password, parseInt(process.env.BCRYPT_SALT_ROUNDS));
 
     // Create verification token
     const { v4: uuidv4 } = require("uuid");
@@ -118,14 +108,14 @@ exports.signIn = async (req, res, next) => {
       httpOnly: true,
       secure: true, // Use Secure in production
       sameSite: "None", // Helps prevent CSRF
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 30 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true, // Use Secure in production
       sameSite: "None", // Helps prevent CSRF
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
     return res.json({
@@ -183,8 +173,8 @@ exports.refreshToken = (req, res) => {
     res.cookie("authToken", newToken, {
       httpOnly: true,
       secure: true, // Use Secure in production
-      sameSite: "lax", // Helps prevent CSRF
-      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "none", // Helps prevent CSRF
+      maxAge: 30 * 60 * 1000,
     });
 
     return res.json({
@@ -273,14 +263,8 @@ exports.resetPassword = async (req, res, next) => {
       throw new NotFoundError("This link is invalid or expired");
     }
 
-    const hashedPassword = await bcryptjs.hash(
-      newPassword,
-      parseInt(process.env.BCRYPT_SALT_ROUNDS)
-    );
-    await User.update(
-      { password: hashedPassword, passwordResetToken: null },
-      { where: { passwordResetToken: token } }
-    );
+    const hashedPassword = await bcryptjs.hash(newPassword, parseInt(process.env.BCRYPT_SALT_ROUNDS));
+    await User.update({ password: hashedPassword, passwordResetToken: null }, { where: { passwordResetToken: token } });
 
     return res.status(200).json({ message: "Password reset successful" });
   } catch (err) {
@@ -308,7 +292,7 @@ exports.demoSignIn = async (req, res, next) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: process.env.JWT_DEMO_ACCOUNT_EXPIRES_IN,
+        expiresIn: process.env.JWT_EXPIRES_IN,
       }
     );
 
@@ -321,7 +305,7 @@ exports.demoSignIn = async (req, res, next) => {
       },
       process.env.REFRESH_TOKEN_SECRET,
       {
-        expiresIn: process.env.REFRESH_TOKEN_DEMO_ACCOUNT_EXPIRES_IN,
+        expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
       }
     );
 
@@ -329,14 +313,14 @@ exports.demoSignIn = async (req, res, next) => {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      maxAge: 60 * 60 * 1000,
+      maxAge: 30 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
     return res.json({
