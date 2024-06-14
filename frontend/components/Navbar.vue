@@ -52,6 +52,7 @@ const openModal = (isRegister) => {
 
 const closeModal = () => {
   isModalOpen.value = false;
+  showDemoLogin.value = false;
   updateUrl(null);
 
   emailRegister.value = "";
@@ -214,15 +215,15 @@ const links = computed(() => [
 
 const demoSignInError = ref(null);
 async function goToDemoAccount() {
-  const demoAccountApiUrl = `${import.meta.env.VITE_API_URL}/auth/demo-sign-in`;
-  const demoAccountState = await $fetchApi(demoAccountApiUrl, {
-    method: "POST",
-  });
-
   if (authStore.isLoading) {
     showDemoLogin.value = true;
     isModalOpen.value = true;
   }
+
+  const demoAccountApiUrl = `${import.meta.env.VITE_API_URL}/auth/demo-sign-in`;
+  const demoAccountState = await $fetchApi(demoAccountApiUrl, {
+    method: "POST",
+  });
 
   if (demoAccountState.data) {
     localStorage.setItem("username", demoAccountState.data.user.username);
@@ -372,9 +373,9 @@ async function goToDemoAccount() {
           </div>
 
           <!-- Demo Account -->
-          <div v-else-if="showDemoLogin">
+          <div v-else-if="showDemoLogin" class="flex flex-col items-center justify-center">
             <h2 class="text-lg text-center font-semibold text-gray-800">Demo Account</h2>
-            <div class="flex justify-center items-center w-full h-10 rounded-lg text-sm">
+            <div class="flex justify-center items-center w-full h-96 rounded-lg text-base">
               <p v-if="demoSignInError">
                 {{ demoSignInError }}
               </p>
