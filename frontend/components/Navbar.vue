@@ -208,9 +208,9 @@ onMounted(() => {
   username.value = localStorage.getItem("username") || authStore.user.username;
 });
 const links = computed(() => [
-  { name: "Dashboard", path: `/users/${username.value}` },
-  { name: "Profile", path: `/users/${username.value}/profile` },
-  { name: "Favorites", path: `/users/${username.value}/favorites` },
+  { name: "Dashboard", path: `/users/${username}` },
+  { name: "Profile", path: `/users/${username}/profile` },
+  { name: "Favorites", path: `/users/${username}/favorites` },
 ]);
 
 const demoSignInError = ref(null);
