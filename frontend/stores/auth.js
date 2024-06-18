@@ -20,8 +20,13 @@ export const useAuthStore = defineStore("auth", {
             status: checkIfUserLoggedState.status,
             error: checkIfUserLoggedState.error,
             data: checkIfUserLoggedState.data,
+            loading: checkIfUserLoggedState.loading,
           }),
           ({ status, error, data }) => {
+            if (!loading) {
+              this.isLoading = false;
+            }
+
             if (status === 401) {
               if (error === "No token provided") {
                 this.isAuthenticated = false;
@@ -42,10 +47,9 @@ export const useAuthStore = defineStore("auth", {
         );
       } catch (error) {
         this.isAuthenticated = false;
+        this.isLoading = false;
         localStorage.removeItem("username");
         navigateTo("/");
-      } finally {
-        this.isLoading = false;
       }
     },
     async handleTokenRefresh() {
