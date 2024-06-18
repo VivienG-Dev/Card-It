@@ -97,6 +97,24 @@ function useRegister() {
 
     isLoading.value = true;
 
+    if (passwordError.value) {
+      errorResponse.value = passwordError.value;
+      isLoading.value = false;
+      return;
+    }
+
+    if (emailError.value) {
+      errorResponse.value = emailError.value;
+      isLoading.value = false;
+      return;
+    }
+
+    if (usernameError.value) {
+      errorResponse.value = usernameError.value;
+      isLoading.value = false;
+      return;
+    }
+
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
         method: "PUT",
@@ -347,7 +365,7 @@ async function goToDemoAccount() {
                     @input="validatePassword(passwordRegister)"
                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     :class="{
-                      'border-red-500': passwordErrorRegister || (errorResponseRegister && passwordRegister === ''),
+                      'border-red-500': passwordError || (errorResponseRegister && passwordRegister === ''),
                     }"
                   />
                   <Icons
