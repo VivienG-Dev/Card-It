@@ -9,7 +9,7 @@ const username = route.params.username;
 const deckId = route.params.deckId;
 
 function goBack() {
-  navigateTo(`/users/${username}`);
+  window.history.back();
 }
 
 const showModal = ref(false);

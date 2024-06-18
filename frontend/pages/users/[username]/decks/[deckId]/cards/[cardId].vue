@@ -12,7 +12,7 @@ const cardId = route.params.cardId;
 const { titleError, descriptionError, validateTitle, validateDescription } = useValidation();
 
 function goBack() {
-  navigateTo(`/users/${username}/decks/${deckId}`);
+  window.history.back();
 }
 
 const title = ref("");
@@ -144,45 +144,3 @@ watch(cardState, (newState) => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.svg-bg {
-  position: absolute;
-  z-index: -1;
-  filter: blur(70px);
-  transform: translate3d(0, 0, 0);
-  /* Fix for Safari flickering */
-  background-repeat: no-repeat;
-  width: 70%;
-  height: 60%;
-  will-change: filter;
-}
-
-.svg-bg-1 {
-  top: 20%;
-  left: 0%;
-  background-image: url("/Vector-1.svg");
-  /* animation: one 10s infinite; */
-}
-
-.svg-bg-2 {
-  top: 13%;
-  left: 25%;
-  background-image: url("/Vector-2.svg");
-  /* animation: two 10s infinite delay(0.5s); */
-}
-
-.svg-bg-3 {
-  top: 10%;
-  left: 40%;
-  background-image: url("/Vector-3.svg");
-  /* animation: one 10s infinite; */
-}
-
-.svg-bg-4 {
-  top: 10%;
-  left: 40%;
-  background-image: url("/Vector-4.svg");
-  /* animation: two 10s infinite delay(0.5s); */
-}
-</style>
