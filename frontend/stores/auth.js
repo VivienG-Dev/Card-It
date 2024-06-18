@@ -12,54 +12,34 @@ export const useAuthStore = defineStore("auth", {
     async checkAuth() {
       this.isLoading = true;
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/check`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
+        const checkIfUserLoggedApiUrl = `${import.meta.env.VITE_API_URL}/auth/check`;
+        const checkIfUserLoggedState = useApiFetch(checkIfUserLoggedApiUrl);
 
-        const authStatus = await response.json();
-
-        if (response.status === 401) {
-          if (authStatus.error.message === "No token provided") {
-            const refreshResponse = await fetch(`${import.meta.env.VITE_API_URL}/auth/refresh`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include",
-            });
-
-            if (!refreshResponse.ok) {
-              throw new Error("Refresh token failed");
-            }
-
-            const refreshStatus = await refreshResponse.json();
-
-            if (refreshStatus.error) {
-              this.isAuthenticated = false;
-              localStorage.removeItem("username");
-              navigateTo("/");
+        watch(
+          () => ({
+            status: checkIfUserLoggedState.status,
+            error: checkIfUserLoggedState.error,
+            data: checkIfUserLoggedState.data,
+          }),
+          ({ status, error, data }) => {
+            if (status === 401) {
+              if (error === "No token provided") {
+                this.isAuthenticated = false;
+                localStorage.removeItem("username");
+                navigateTo("/");
+              } else if (error === "Invalid token" || error === "Invalid refresh token") {
+                this.handleInvalidToken();
+              } else {
+                this.isAuthenticated = false;
+                localStorage.removeItem("username");
+                navigateTo("/");
+              }
             } else {
               this.isAuthenticated = true;
-              this.user.username = refreshStatus.username;
+              this.user.username = data.username;
             }
-          } else if (
-            authStatus.error.message === "Invalid token" ||
-            authStatus.error.message === "Invalid token - ID not found"
-          ) {
-            // Handle the case where the token is invalid
-            this.isAuthenticated = false;
-            this.logout();
-            localStorage.removeItem("username");
-            navigateTo("/");
           }
-        } else {
-          this.isAuthenticated = true;
-          this.user.username = authStatus.username;
-        }
+        );
       } catch (error) {
         this.isAuthenticated = false;
         localStorage.removeItem("username");
@@ -68,20 +48,35 @@ export const useAuthStore = defineStore("auth", {
         this.isLoading = false;
       }
     },
-    async logout() {
-      this.isAuthenticated = false;
-
+    async handleTokenRefresh() {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+        this.isAuthenticated = true;
+        this.checkAuth();
+      } catch (error) {
+        this.isAuthenticated = false;
+        localStorage.removeItem("username");
+        navigateTo("/");
+      }
+    },
+    handleInvalidToken() {
+      this.isAuthenticated = false;
+      this.logout();
+      localStorage.removeItem("username");
+      navigateTo("/");
+    },
+    async logout() {
+      try {
+        const logoutApiUrl = `${import.meta.env.VITE_API_URL}/auth/logout`;
+        const logoutState = $fetchApi(logoutApiUrl, {
           method: "POST",
-          credentials: "include",
         });
 
-        if (response.ok) {
+        if (logoutState.error) {
+          console.error("Logout failed");
+        } else {
+          this.isAuthenticated = false;
           localStorage.removeItem("username");
           navigateTo("/");
-        } else {
-          console.error("Logout failed");
         }
       } catch (error) {
         console.error("Logout error:", error);
