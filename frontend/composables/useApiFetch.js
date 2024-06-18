@@ -4,6 +4,7 @@ export function useApiFetch(apiUrl, options = {}) {
     data: null,
     error: null,
     loading: false,
+    status: null,
   });
 
   const { data, pending, error } = useFetch(apiUrl, {
@@ -21,10 +22,8 @@ export function useApiFetch(apiUrl, options = {}) {
   });
 
   watch(error, (fetchError) => {
-    state.error =
-      fetchError?.data.message ||
-      fetchError.message ||
-      "Unknown error occurred";
+    state.error = fetchError?.data.message || fetchError.message || "Unknown error occurred";
+    state.status = fetchError?.statusCode || null;
   });
 
   return state;
@@ -49,10 +48,7 @@ export async function $fetchApi(url, options = {}) {
     });
     state.data = response?.data || response || null;
   } catch (fetchError) {
-    state.error =
-      fetchError?.data.message ||
-      fetchError.message ||
-      "Unknown error occurred";
+    state.error = fetchError?.data.message || fetchError.message || "Unknown error occurred";
   } finally {
     state.loading = false;
   }
