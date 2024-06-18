@@ -23,7 +23,6 @@ export const useAuthStore = defineStore("auth", {
             loading: checkIfUserLoggedState.loading,
           }),
           ({ status, error, data, loading }) => {
-            console.log(status, error, data, loading);
             if (!loading) {
               this.isLoading = false;
             }
