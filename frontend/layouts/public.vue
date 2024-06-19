@@ -13,9 +13,7 @@
       <div class="svg-bg svg-bg-4"></div>
       <ClientOnly>
         <div class="flex space-x-4 w-full mt-32">
-          <div
-            class="bg-white w-full h-96 rounded-lg p-3 space-y-4 flex flex-col justify-center items-center"
-          >
+          <div class="bg-white w-full h-96 rounded-lg p-3 space-y-4 flex flex-col justify-center items-center">
             <slot />
           </div>
         </div>
