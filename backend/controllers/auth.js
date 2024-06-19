@@ -11,8 +11,16 @@ exports.register = async (req, res, next) => {
   let { email, username, password } = req.body;
 
   try {
-    if (!email || !username || !password) {
-      throw new RequestError("Missing required information");
+    if (!username) {
+      throw new RequestError("Username is required");
+    }
+
+    if (!email) {
+      throw new RequestError("Email is required");
+    }
+
+    if (!password) {
+      throw new RequestError("Password is required");
     }
 
     username = username.toLowerCase();
@@ -27,7 +35,7 @@ exports.register = async (req, res, next) => {
     });
 
     if (userWithSameUsername) {
-      throw new AuthenticationError(`User ${username} already exists`);
+      throw new AuthenticationError(`User already exists`);
     }
 
     if (userWithSameEmail) {
@@ -64,8 +72,12 @@ exports.signIn = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    if (!email || !password) {
-      throw new RequestError("Missing required information");
+    if (!email) {
+      throw new RequestError("Email is required");
+    }
+
+    if (!password) {
+      throw new RequestError("Password is required");
     }
 
     let user = await User.findOne({ where: { email: email }, raw: true });
