@@ -25,21 +25,18 @@ export function useValidation() {
   const colorError = ref("");
 
   const validateUsername = (username) => {
-    username.length < 1
-      ? (usernameError.value = "Username must be at least 6 characters long.")
+    username.length < 4
+      ? (usernameError.value = "Username must be at least 4 characters long.")
       : (usernameError.value = "");
   };
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    email.match(emailRegex)
-      ? (emailError.value = "")
-      : (emailError.value = "Please enter a valid email address.");
+    email.match(emailRegex) ? (emailError.value = "") : (emailError.value = "Please enter a valid email address.");
   };
 
   const validatePassword = (password) => {
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
     password.match(passwordRegex)
       ? (passwordError.value = "")
       : (passwordError.value =
