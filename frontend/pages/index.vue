@@ -19,12 +19,8 @@ const expandDiv = ref(false);
       <div class="svg-bg svg-bg-3"></div>
       <div class="svg-bg svg-bg-2"></div>
       <div class="svg-bg svg-bg-4"></div>
-      <div
-        class="flex flex-col sm:flex-row justify-center items-center w-full h-80 px-0 sm:px-10 md:px-20 lg:px-32"
-      >
-        <div
-          class="w-100 sm:w-1/2 flex flex-col justify-center items-start mb-10"
-        >
+      <div class="flex flex-col sm:flex-row justify-center items-center w-full h-80 px-0 sm:px-10 md:px-20 lg:px-32">
+        <div class="w-100 sm:w-1/2 flex flex-col justify-center items-start mb-10">
           <h1 class="text-4xl sm:text-5xl font-bold mb-5">Card-It</h1>
           <h2 class="text-2xl sm:text-3xl font-bold">Create your cards</h2>
           <h2 class="text-2xl sm:text-3xl font-bold">Test your memory</h2>
@@ -49,8 +45,8 @@ const expandDiv = ref(false);
             class="w-60 h-80 bg-white border-4 border-orange-400 rounded-lg absolute right-0 sm:right-0 flex justify-center items-center p-4 float-animation"
           >
             <p>
-              Keep it simple, stupid (KISS) is a design principle which states
-              that designs and/or systems should be as simple as possible
+              Keep it simple, stupid (KISS) is a design principle which states that designs and/or systems should be as
+              simple as possible
             </p>
           </div>
           <div
