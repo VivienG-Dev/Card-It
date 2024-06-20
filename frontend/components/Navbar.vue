@@ -73,21 +73,29 @@ if (route.query.modal) {
 
 // Handle error responses
 const handleErrorResponse = (error) => {
-  if (error === "User already exists" || error === "Email already exists") {
-    state.value.usernameError = error === "User already exists" ? error : "";
-    state.value.emailError = error === "Email already exists" ? error : "";
-  } else if (error === "User not found") {
-    state.value.errorResponse = error;
-  } else if (error === "Password is required") {
-    state.value.passwordError = error;
-  } else if (error === "Email is required") {
-    state.value.emailError = error;
-  } else if (error === "Username is required") {
-    state.value.usernameError = error;
-  } else if (error === "Invalid email or password") {
-    state.value.errorResponse = error;
-  } else {
-    state.value.errorResponse = "An error occurred. Please try again.";
+  switch (error) {
+    case "User already exists":
+    case "Email already exists":
+      state.value.usernameError = error === "User already exists" ? error : "";
+      state.value.emailError = error === "Email already exists" ? error : "";
+      break;
+    case "User not found":
+      state.value.errorResponse = error;
+      break;
+    case "Password is required":
+      state.value.passwordError = error;
+      break;
+    case "Email is required":
+      state.value.emailError = error;
+      break;
+    case "Username is required":
+      state.value.usernameError = error;
+      break;
+    case "Invalid email or password":
+      state.value.errorResponse = error;
+      break;
+    default:
+      state.value.errorResponse = "An error occurred. Please try again.";
   }
 };
 
