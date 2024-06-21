@@ -68,10 +68,7 @@ exports.updateUserData = async (req, res, next) => {
       throw new NotFoundError("User not found");
     }
 
-    if (
-      user.username === "demo" &&
-      user.id === "6ac336cf-ba7b-49b0-8aae-a7ba8bd11dfa"
-    ) {
+    if (user.username === "demo" && user.id === "6ac336cf-ba7b-49b0-8aae-a7ba8bd11dfa") {
       throw new UserError("Demo user cannot be updated");
     }
 
@@ -89,8 +86,7 @@ exports.updateUserData = async (req, res, next) => {
       throw new RequestError("No changes detected");
     }
     return res.json({
-      message:
-        "User updated, please log out and log in again if you changed your username.",
+      message: "User updated, please log out and log in again if you changed your username.",
     });
   } catch (err) {
     next(err);
@@ -100,25 +96,35 @@ exports.updateUserData = async (req, res, next) => {
 exports.addUserInBin = (req, res, next) => {
   let userId = req.userId;
 
-  User.destroy({ where: { id: userId } })
-    .then((_) => {
-      return res.status(204).json({ message: "User deleted" });
-    })
-    .catch((err) => next(err));
+  if (userId === "6ac336cf-ba7b-49b0-8aae-a7ba8bd11dfa") {
+    throw new UserError("Demo user cannot be deleted");
+  }
+
+  try {
+    User.destroy({ where: { id: userId } });
+    return res.status(204).json({ message: "User deleted" });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.restoreUserFromBin = (req, res, next) => {
   let userId = req.userId;
 
-  User.restore({ where: { id: userId } })
-    .then((_) => {
-      return res.status(204).json({ message: "User restored" });
-    })
-    .catch((err) => next(err));
+  try {
+    User.restore({ where: { id: userId } });
+    res.status(204).json({ message: "User restored" });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.deleteUserPermanently = (req, res, next) => {
   let userId = req.userId;
+
+  if (userId === "6ac336cf-ba7b-49b0-8aae-a7ba8bd11dfa") {
+    throw new UserError("Demo user cannot be deleted");
+  }
 
   try {
     User.destroy({ where: { id: userId }, force: true });
