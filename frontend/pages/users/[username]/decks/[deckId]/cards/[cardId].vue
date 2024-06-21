@@ -19,6 +19,7 @@ const title = ref("");
 const description = ref("");
 const updateCardSuccess = ref(null);
 const updateCardError = ref(null);
+const updateCardLoading = ref(false);
 async function updateCard() {
   updateCardError.value = null;
   updateCardSuccess.value = null;
@@ -37,11 +38,15 @@ async function updateCard() {
     }),
   });
 
+  updateCardLoading.value = updateCardState.loading;
+
   if (updateCardState.data) {
     updateCardSuccess.value = "Card updated successfully";
   } else if (updateCardState.error) {
     updateCardError.value = updateCardState.error;
   }
+
+  updateCardLoading.value = updateCardState.loading;
 }
 
 const showModal = ref(false);
@@ -130,11 +135,11 @@ watch(cardState, (newState) => {
           </div>
         </div>
         <div class="flex flex-col">
-          <Button name="Edit the card" color="bg-customPrimary text-white" />
+          <Button name="Edit the card" variant="confirm" :isLoading="updateCardLoading" />
         </div>
       </form>
       <div class="text-center">
-        <button @click="showModal = true" class="text-red-600 text-base font-light">Delete the card</button>
+        <Button @click="showModal = true" name="Delete the card" variant="delete" />
         <Modal :isVisible="showModal" @confirm="deleteCard()" @cancel="hideModal()">
           <template #content>
             <p>Are you sure you want to delete this card?</p>

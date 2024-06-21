@@ -21,33 +21,34 @@ function toggleModalGenerateShareLink() {
 }
 
 // Fetch deck detail
-const deckApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/${
-  deckId.value
-}`;
+const deckApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/${deckId.value}`;
 const deckState = useApiFetch(deckApiUrl);
 
 // Fetch cards details
-const cardsApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/${
-  deckId.value
-}/cards`;
+const cardsApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/${deckId.value}/cards`;
 const cardsState = useApiFetch(cardsApiUrl);
 
 // Generate share link
 const generatedLink = ref("");
-const generateShareLinkApiUrl = `${
-  import.meta.env.VITE_API_URL
-}/users/${username}/decks/${deckId.value}/generate-share-link`;
+const loadingGeneratedLink = ref(false);
 async function generateShareLink() {
+  const generateShareLinkApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/${
+    deckId.value
+  }/generate-share-link`;
   const generateShareLinkState = await $fetchApi(generateShareLinkApiUrl, {
     method: "PATCH",
   });
+
+  loadingGeneratedLink.value = generateShareLinkState.loading;
+
   if (generateShareLinkState.data) {
     generatedLink.value = generateShareLinkState.data.shareToken;
     toggleModalGenerateShareLink();
-  }
-  if (generateShareLinkState.error) {
+  } else if (generateShareLinkState.error) {
     console.error(generateShareLinkState.error);
   }
+
+  loadingGeneratedLink.value = generateShareLinkState.loading;
 }
 
 // Copy token
@@ -61,11 +62,7 @@ function copyToken() {
 <template>
   <div class="flex justify-between">
     <div class="w-28">
-      <Icons
-        @click="goBack()"
-        svgClass="w-8 h-8 cursor-pointer"
-        isType="arrowLeft"
-      />
+      <Icons @click="goBack()" svgClass="w-8 h-8 cursor-pointer" isType="arrowLeft" />
     </div>
     <h2 class="text-center text-xl font-bold w-full">Dashboard</h2>
     <div class="w-28" />
@@ -76,17 +73,15 @@ function copyToken() {
       {{ deckState.data?.title ? deckState.data.title + ":" : "" }}
     </h2>
     <div>
-      <div class="space-x-2">
-        <button
+      <div class="flex justify-center items-center space-x-2">
+        <Button
           @click="generateShareLink()"
-          class="bg-customPrimary text-white px-4 rounded-lg"
-        >
-          Generate share link
-        </button>
+          name="Generate share link"
+          variant="action"
+          :isLoading="loadingGeneratedLink"
+        />
         <nuxt-link :to="`/users/${username}/decks/${deckId}/edit`">
-          <button class="bg-customPrimary text-white px-4 rounded-lg">
-            Edit the Deck
-          </button>
+          <Button name="Edit the deck" variant="action" />
         </nuxt-link>
       </div>
 
@@ -113,12 +108,7 @@ function copyToken() {
       </Modal>
     </div>
   </div>
-  <div
-    v-if="cardsState.loading || deckState.loading"
-    class="flex justify-center items-center h-64"
-  >
-    Loading...
-  </div>
+  <div v-if="cardsState.loading || deckState.loading" class="flex justify-center items-center h-64">Loading...</div>
   <div
     v-else-if="cardsState.error && cardsState.error !== 404"
     class="bg-white flex flex-col space-y-4 justify-center items-center p-10"
@@ -126,10 +116,7 @@ function copyToken() {
     <Icons svgClass="w-8 h-8" isType="locked" />
     <p class="text-2xl font-bold">{{ cardsState.error }}</p>
   </div>
-  <div
-    v-else
-    class="bg-white flex flex-wrap gap-4 justify-center sm:justify-normal"
-  >
+  <div v-else class="bg-white flex flex-wrap gap-4 justify-center sm:justify-normal">
     <nuxt-link :to="`/users/${username}/decks/${deckId}/cards`">
       <div
         class="bg-gray-300 w-36 h-48 sm:w-40 sm:h-52 rounded-lg flex justify-center items-center hover:ring-2 ring-blue-500 ring-offset-2 ring-offset-blue-100 cursor-pointer"

@@ -16,6 +16,7 @@ function goBack() {
 const title = ref("");
 const description = ref("");
 const createCardError = ref(null);
+const createCardLoading = ref(false);
 async function createCard() {
   const createCardApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/${deckId}/cards`;
   const createCardState = await $fetchApi(createCardApiUrl, {
@@ -26,11 +27,15 @@ async function createCard() {
     }),
   });
 
+  createCardLoading.value = createCardState.loading;
+
   if (createCardState.data) {
     navigateTo(`/users/${username}/decks/${deckId}/`);
   } else if (createCardState.error) {
     createCardError.value = createCardState.error;
   }
+
+  createCardLoading.value = createCardState.loading;
 }
 </script>
 
@@ -89,51 +94,9 @@ async function createCard() {
           </div>
         </div>
         <div class="flex flex-col space-y-2">
-          <Button name="Create" color="bg-customPrimary text-white" />
+          <Button name="Create" variant="confirm" :isLoading="createCardLoading" />
         </div>
       </form>
     </div>
   </div>
 </template>
-
-<style scoped>
-.svg-bg {
-  position: absolute;
-  z-index: -1;
-  filter: blur(70px);
-  transform: translate3d(0, 0, 0);
-  /* Fix for Safari flickering */
-  background-repeat: no-repeat;
-  width: 70%;
-  height: 60%;
-  will-change: filter;
-}
-
-.svg-bg-1 {
-  top: 20%;
-  left: 0%;
-  background-image: url("/Vector-1.svg");
-  /* animation: one 10s infinite; */
-}
-
-.svg-bg-2 {
-  top: 13%;
-  left: 25%;
-  background-image: url("/Vector-2.svg");
-  /* animation: two 10s infinite delay(0.5s); */
-}
-
-.svg-bg-3 {
-  top: 10%;
-  left: 40%;
-  background-image: url("/Vector-3.svg");
-  /* animation: one 10s infinite; */
-}
-
-.svg-bg-4 {
-  top: 10%;
-  left: 40%;
-  background-image: url("/Vector-4.svg");
-  /* animation: two 10s infinite delay(0.5s); */
-}
-</style>

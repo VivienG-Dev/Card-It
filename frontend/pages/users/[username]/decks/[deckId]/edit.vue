@@ -39,6 +39,7 @@ async function deleteDeck() {
 const title = ref("");
 const updateDeckSuccess = ref(null);
 const updateDeckError = ref(null);
+const updateDeckLoading = ref(false);
 async function updateDeck() {
   updateDeckError.value = null;
 
@@ -58,12 +59,16 @@ async function updateDeck() {
     body: JSON.stringify(body),
   });
 
+  updateDeckLoading.value = updateDeckState.loading;
+
   if (updateDeckState.data) {
     updateDeckSuccess.value = "Deck updated successfully";
     deckState.data = updateDeckState.data;
   } else if (updateDeckState.error) {
     updateDeckError.value = updateDeckState.error;
   }
+
+  updateDeckLoading.value = updateDeckState.loading;
 }
 
 const decksApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/${deckId}`;
@@ -117,11 +122,11 @@ watch(deckState, (newState) => {
           </div>
         </div>
         <div class="flex flex-col">
-          <Button name="Edit the deck" color="bg-customPrimary text-white" />
+          <Button name="Edit the deck" variant="confirm" :isLoading="updateDeckLoading" />
         </div>
       </form>
       <div class="text-center">
-        <button @click="toggleModal" class="text-red-600 text-base font-extralight">Delete the deck</button>
+        <Button @click="toggleModal" name="Delete the deck" variant="delete" />
         <Modal :isVisible="showModal" @confirm="deleteDeck()" @cancel="toggleModal">
           <template #content>
             <p>Are you sure you want to delete this deck?</p>

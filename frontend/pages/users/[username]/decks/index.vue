@@ -52,7 +52,9 @@ function updateCustomColor() {
 }
 
 const errorDeck = ref(null);
+const loadingDeck = ref(false);
 async function createDeck() {
+  loadingDeck.value = true;
   const createDeckApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks`;
   const createDeckState = await $fetchApi(createDeckApiUrl, {
     method: "PUT",
@@ -62,12 +64,16 @@ async function createDeck() {
     }),
   });
 
+  loadingDeck.value = createDeckState.loading;
+
   if (createDeckState.data) {
     deckId.value = createDeckState.data.id;
     step.value = 2;
   } else if (createDeckState.error) {
     errorDeck.value = createDeckState.error;
   }
+
+  loadingDeck.value = createDeckState.loading;
 }
 
 const errorCard = ref(null);
@@ -169,7 +175,7 @@ async function createCard() {
           </div>
         </div>
         <div class="flex flex-col space-y-2">
-          <Button name="Create the deck" color="bg-customPrimary text-white" />
+          <Button name="Create the deck" variant="confirm" :isLoading="loadingDeck" />
         </div>
       </form>
 
@@ -218,7 +224,7 @@ async function createCard() {
           </div>
         </div>
         <div class="flex flex-col space-y-2">
-          <Button name="Create the card" color="bg-customPrimary text-white" />
+          <Button name="Create the card" variant="confirm" :isLoading="loadingDeck" />
           <button @click="skipStep2()" class="text-sm font-light text-red-500 text-right">Skip the step 2</button>
         </div>
       </form>
