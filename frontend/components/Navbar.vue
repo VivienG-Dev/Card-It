@@ -187,6 +187,7 @@ const links = computed(() => [
 const demoSignInError = ref(null);
 const goToDemoAccount = async () => {
   if (authStore.isLoading) {
+    state.value.isLoading = true;
     state.value.showDemoLogin = true;
     state.value.isModalOpen = true;
   }
@@ -195,9 +196,11 @@ const goToDemoAccount = async () => {
   const demoAccountState = await $fetchApi(demoAccountApiUrl, { method: "POST" });
 
   if (demoAccountState.data) {
+    state.value.isLoading = false;
     localStorage.setItem("username", demoAccountState.data.user.username);
     window.location.href = `/users/${demoAccountState.data.user.username}`;
   } else if (demoAccountState.error) {
+    state.value.isLoading = false;
     demoSignInError.value = demoAccountState.error;
   }
 };
@@ -218,12 +221,10 @@ const goToDemoAccount = async () => {
             </div>
             <button class="hidden sm:flex" @click="authStore.logout">Logout</button>
           </div>
-          <div v-else class="space-x-4 font-light flex">
-            <button class="px-2 py-1 bg-customPrimary rounded-lg text-white" @click="goToDemoAccount">
-              Demo Account
-            </button>
-            <button @click="openModal('register')">Register</button>
-            <button @click="openModal('login')">Login</button>
+          <div v-else class="space-x-1 sm:space-x-2 font-light flex">
+            <Button @click="goToDemoAccount" name="Demo Account" variant="demo" :isLoading="state.isLoading" />
+            <Button @click="openModal('register')" name="Register" variant="text" />
+            <Button @click="openModal('login')" name="Login" variant="text" />
           </div>
           <div v-if="isMenuOpen" class="absolute -right-3 mt-3 w-48 rounded-md shadow-lg bg-white z-50">
             <div v-if="authStore.isAuthenticated" class="py-1">
@@ -323,7 +324,7 @@ const goToDemoAccount = async () => {
                 </div>
                 <div class="text-red-500 text-xs text-center h-4">{{ state.passwordError }}</div>
               </div>
-              <Button name="Register" />
+              <Button name="Register" variant="auth" :isLoading="state.isLoading" />
               <div class="flex justify-center">
                 <div class="w-2/3 h-px bg-black rounded-lg"></div>
               </div>
@@ -392,7 +393,7 @@ const goToDemoAccount = async () => {
                 </div>
                 <div class="text-red-500 text-xs text-center h-8">{{ state.passwordError }}</div>
               </div>
-              <Button name="Sign-In" />
+              <Button name="Sign-In" variant="auth" :isLoading="state.isLoading" />
               <div class="flex justify-center">
                 <div class="w-2/3 h-px bg-black rounded-lg"></div>
               </div>
