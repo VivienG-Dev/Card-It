@@ -17,15 +17,16 @@ function cancelAction() {
 
 <template>
   <transition name="fade">
-    <div v-if="isVisible" class="fixed inset-0 flex items-center justify-center backdrop-blur-sm backdrop-brightness-50 z-40">
+    <div
+      v-if="isVisible"
+      class="fixed inset-0 flex items-center justify-center backdrop-blur-sm backdrop-brightness-50 z-40"
+    >
       <transition name="scale">
         <div class="modal-content bg-white p-4 rounded-lg shadow-lg" v-if="isVisible">
           <slot name="content"></slot>
           <div class="flex justify-end mt-4 space-x-4">
-            <button @click="confirmAction" class="bg-customPrimary hover:bg-blue-700 text-white font-normal py-2 px-4 rounded-lg">
-              {{ confirmNameButton ? confirmNameButton : "Confirm" }}
-            </button>
-            <button @click="cancelAction" class="font-light">Cancel</button>
+            <Button @click="cancelAction" name="Cancel" variant="ghost" />
+            <Button @click="confirmAction" name="Confirm" variant="confirm" />
           </div>
         </div>
       </transition>
