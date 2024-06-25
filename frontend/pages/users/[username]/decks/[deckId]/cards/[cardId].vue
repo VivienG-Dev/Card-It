@@ -1,4 +1,8 @@
 <script setup>
+definePageMeta({
+  layout: "authenticated",
+});
+
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 

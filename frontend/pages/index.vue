@@ -1,8 +1,4 @@
 <script setup>
-definePageMeta({
-  layout: false,
-});
-
 const expandDiv = ref(false);
 </script>
 
