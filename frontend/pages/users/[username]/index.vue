@@ -18,6 +18,8 @@ const { isVisible: isModalAcceptSharedDeckVisible, toggle: toggleModalAcceptShar
 
 // Accept shared deck
 const token = ref("");
+const loadingAcceptSharedDeck = ref(false);
+const errorAcceptSharedDeck = ref();
 const acceptSharedDeck = async () => {
   const acceptShareUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/accept-share/${token.value}`;
   const acceptShareState = await $fetchApi(acceptShareUrl, {
@@ -25,14 +27,18 @@ const acceptSharedDeck = async () => {
     body: JSON.stringify({ token: token.value }),
   });
 
+  loadingAcceptSharedDeck.value = acceptShareState.loading;
+
   if (acceptShareState.data) {
     const deckState = useApiFetch(decksApiUrl);
     toggleModalAcceptSharedDeck();
     token.value = "";
     deckState.error = null;
   } else if (acceptShareState.error) {
-    deckState.error = acceptShareState.error;
+    errorAcceptSharedDeck.value = acceptShareState.error;
   }
+
+  loadingAcceptSharedDeck.value = acceptShareState.loading;
 };
 </script>
 
@@ -49,6 +55,7 @@ const acceptSharedDeck = async () => {
       <Button @click="toggleModalAcceptSharedDeck" name="Accept shared link" variant="action" />
       <Modal
         :isVisible="isModalAcceptSharedDeckVisible"
+        :isLoading="loadingAcceptSharedDeck"
         @confirm="acceptSharedDeck()"
         @cancel="toggleModalAcceptSharedDeck"
       >
@@ -57,10 +64,10 @@ const acceptSharedDeck = async () => {
           <div
             class="flex justify-center items-center w-full h-10 rounded-lg text-sm mt-2"
             :class="{
-              'bg-red-100 text-red-500': deckState.error,
+              'bg-red-100 text-red-500': errorAcceptSharedDeck,
             }"
           >
-            {{ deckState.error ? "Invalid token" : "" }}
+            {{ errorAcceptSharedDeck ? "Invalid token" : "" }}
           </div>
           <input
             type="text"

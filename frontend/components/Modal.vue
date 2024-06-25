@@ -2,6 +2,7 @@
 const props = defineProps({
   isVisible: Boolean,
   confirmNameButton: String,
+  isLoading: Boolean,
 });
 
 const emit = defineEmits(["confirm", "cancel"]);
@@ -26,7 +27,7 @@ function cancelAction() {
           <slot name="content"></slot>
           <div class="flex justify-end mt-4 space-x-4">
             <Button @click="cancelAction" name="Cancel" variant="ghost" />
-            <Button @click="confirmAction" name="Confirm" variant="confirm" />
+            <Button @click="confirmAction" name="Confirm" variant="confirm" :isLoading="isLoading" />
           </div>
         </div>
       </transition>
