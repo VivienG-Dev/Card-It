@@ -1,4 +1,8 @@
 <script setup>
+definePageMeta({
+  layout: "authenticated",
+});
+
 import { useRoute } from "vue-router";
 
 const route = useRoute();

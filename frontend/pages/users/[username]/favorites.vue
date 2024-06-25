@@ -1,4 +1,8 @@
 <script setup>
+definePageMeta({
+  layout: "authenticated",
+});
+
 import { useRoute } from "vue-router";
 
 const route = useRoute();
@@ -6,9 +10,7 @@ const route = useRoute();
 const username = route.params.username;
 
 // Fetch favorites cards
-const favoritesApiUrl = `${
-  import.meta.env.VITE_API_URL
-}/users/${username}/favorites`;
+const favoritesApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/favorites`;
 const favoritesState = useApiFetch(favoritesApiUrl);
 
 function goBack() {
@@ -27,11 +29,7 @@ const updateFavorites = (cardId) => {
 <template>
   <div class="flex justify-between">
     <div class="w-28">
-      <Icons
-        @click="goBack()"
-        svgClass="w-8 h-8 cursor-pointer"
-        isType="arrowLeft"
-      />
+      <Icons @click="goBack()" svgClass="w-8 h-8 cursor-pointer" isType="arrowLeft" />
     </div>
     <h2 class="text-center text-xl font-bold w-full">Dashboard</h2>
     <div class="w-28" />
