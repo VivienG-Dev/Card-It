@@ -24,6 +24,7 @@ const state = ref({
 });
 
 const { usernameError, emailError, passwordError, validateUsername, validateEmail, validatePassword } = useValidation();
+const { isMenuOpen, toggleMenu } = useNavigation();
 
 // Watch route query for modal
 watch(
@@ -167,22 +168,11 @@ const togglePasswordVisibility = () => {
   isPasswordVisible.value = !isPasswordVisible.value;
 };
 
-const isMenuOpen = ref(false);
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
-};
-
 // Retrieve username from local storage or store
 const username = ref("");
 onMounted(() => {
   username.value = localStorage.getItem("username") || authStore.user.username;
 });
-const links = computed(() => [
-  { name: "Dashboard", path: `/users/${username.value}` },
-  { name: "Profile", path: `/users/${username.value}/profile` },
-  { name: "Favorites", path: `/users/${username.value}/favorites` },
-]);
-
 // Demo account sign-in
 const demoSignInError = ref(null);
 const goToDemoAccount = async () => {
@@ -226,26 +216,7 @@ const goToDemoAccount = async () => {
             <Button @click="openModal('register')" name="Register" variant="text" />
             <Button @click="openModal('login')" name="Login" variant="text" />
           </div>
-          <div v-if="isMenuOpen" class="absolute -right-3 mt-3 w-48 rounded-md shadow-lg bg-white z-50">
-            <div v-if="authStore.isAuthenticated" class="py-1">
-              <nuxt-link
-                v-for="link in links"
-                :key="link.name"
-                :to="link.path"
-                class="flex flex-col w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-                @click.native="isMenuOpen = false"
-              >
-                {{ link.name }}
-              </nuxt-link>
-              <button
-                @click="authStore.logout"
-                class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-                @click.native="isMenuOpen = false"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
+          <MobileNavMenu :isMenuOpen="isMenuOpen" @update:isMenuOpen="toggleMenu" />
         </div>
       </ClientOnly>
     </nav>
