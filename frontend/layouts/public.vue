@@ -6,7 +6,7 @@
       </div>
     </div>
 
-    <main class="flex h-screen relative">
+    <main class="flex relative">
       <BackgroundSVGs />
       <ClientOnly>
         <div class="flex space-x-4 w-full mt-32">
@@ -16,5 +16,6 @@
         </div>
       </ClientOnly>
     </main>
+    <Footer />
   </div>
 </template>
