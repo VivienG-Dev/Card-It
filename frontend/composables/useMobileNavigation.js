@@ -1,8 +1,5 @@
-import { ref } from "vue";
-
-export function useNavigation() {
-  const isMenuOpen = ref(false);
-
+const isMenuOpen = ref(false);
+export function useMobileNavigation() {
   const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
   };
