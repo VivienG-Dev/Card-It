@@ -1,13 +1,7 @@
 <script setup>
 const authStore = useAuthStore();
 const { links } = useUserNavigation();
-const props = defineProps({
-  isMenuOpen: Boolean,
-});
-const emit = defineEmits(["update:isMenuOpen"]);
-const closeMenu = () => {
-  emit("update:isMenuOpen");
-};
+const { isMenuOpen, toggleMenu } = useMobileNavigation();
 </script>
 
 <template>
@@ -19,14 +13,11 @@ const closeMenu = () => {
           :key="link.name"
           :to="link.path"
           class="flex flex-col w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-          @click="closeMenu"
+          @click="toggleMenu()"
         >
           {{ link.name }}
         </nuxt-link>
-        <button
-          @click="authStore.logout, closeMenu"
-          class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-        >
+        <button @click="authStore.logout" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
           Logout
         </button>
       </div>
