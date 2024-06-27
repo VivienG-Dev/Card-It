@@ -8,9 +8,7 @@ const email = ref("");
 const password = ref("");
 const isPasswordVisible = ref(false);
 
-const togglePasswordVisibility = () => {
-  isPasswordVisible.value = !isPasswordVisible.value;
-};
+const togglePasswordVisibility = () => (isPasswordVisible.value = !isPasswordVisible.value);
 </script>
 
 <template>
