@@ -1,8 +1,8 @@
 import { useRoute } from "vue-router";
 
 export function useUserNavigation() {
-  const route = useRoute();
-  const username = route.params.username;
+  const authStore = useAuthStore();
+  const username = localStorage.getItem("username") || authStore.user.username;
 
   const links = [
     { name: "Dashboard", path: `/users/${username}` },
