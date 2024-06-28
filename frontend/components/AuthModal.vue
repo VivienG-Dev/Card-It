@@ -137,9 +137,11 @@ watch(successfulResponse, async (newValue) => {
             </div>
             <p class="text-sm text-center font-extralight">
               {{ currentModalType === "register" ? "Already have an account?" : "Don't have an account?" }}
-              <nuxt-link to="/?modal=login" class="underline underline-offset-2">{{
-                currentModalType === "register" ? "Register" : "Sign-Up"
-              }}</nuxt-link>
+              <nuxt-link
+                :to="currentModalType === 'register' ? '/?modal=login' : '/?modal=register'"
+                class="underline underline-offset-2"
+                >{{ currentModalType === "register" ? "Register" : "Sign-Up" }}</nuxt-link
+              >
             </p>
             <p v-if="currentModalType === 'login'" class="text-sm text-center font-extralight">
               <nuxt-link to="/forgot-password" class="underline underline-offset-2">Forgot password</nuxt-link>
