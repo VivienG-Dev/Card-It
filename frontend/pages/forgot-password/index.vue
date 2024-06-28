@@ -61,7 +61,7 @@ async function sendEmailToResetUserPassword(email) {
         />
       </div>
       <div class="flex flex-col">
-        <Button name="Send" color="bg-customPrimary text-white" />
+        <Button name="Send" variant="confirm" />
       </div>
     </form>
   </div>
