@@ -1,13 +1,13 @@
 const isModalOpen = ref(false);
-const showRegisterForm = ref(false);
 const showDemoLogin = ref(false);
+const currentModalType = ref(null);
 
 export function useAuthModal() {
   const route = useRoute();
   const router = useRouter();
 
   const openModal = (modalType) => {
-    showRegisterForm.value = modalType === "register";
+    currentModalType.value = modalType;
     isModalOpen.value = true;
     updateUrl(modalType);
   };
@@ -42,7 +42,7 @@ export function useAuthModal() {
 
   return {
     isModalOpen,
-    showRegisterForm,
+    currentModalType,
     showDemoLogin,
     openModal,
     closeModal,
