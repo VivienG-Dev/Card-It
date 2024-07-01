@@ -11,9 +11,7 @@ const isPasswordVisible = ref(false);
 const togglePasswordVisibility = () => (isPasswordVisible.value = !isPasswordVisible.value);
 
 const handleSubmit = async () => {
-  // Validation
   if (passwordError.value || emailError.value || (usernameError.value && currentModalType.value === "register")) {
-    // Set a general error message
     errorResponse.value = "Please correct the errors in the form.";
     return;
   }
