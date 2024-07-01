@@ -21,7 +21,7 @@ const token = ref("");
 const loadingAcceptSharedDeck = ref(false);
 const errorAcceptSharedDeck = ref();
 const acceptSharedDeck = async () => {
-  const acceptShareUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/accept-share/${token.value}`;
+  const acceptShareUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/accept-share/`;
   const acceptShareState = await $fetchApi(acceptShareUrl, {
     method: "PUT",
     body: JSON.stringify({ token: token.value }),
@@ -67,7 +67,7 @@ const acceptSharedDeck = async () => {
               'bg-red-100 text-red-500': errorAcceptSharedDeck,
             }"
           >
-            {{ errorAcceptSharedDeck ? "Invalid token" : "" }}
+            {{ errorAcceptSharedDeck ? errorAcceptSharedDeck : "" }}
           </div>
           <input
             type="text"
