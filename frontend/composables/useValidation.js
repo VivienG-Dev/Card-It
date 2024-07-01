@@ -36,11 +36,11 @@ export function useValidation() {
   };
 
   const validatePassword = (password) => {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex = (/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i");
     password.match(passwordRegex)
       ? (passwordError.value = "")
       : (passwordError.value =
-          "Password must be at least 8 characters long, include uppercase and lowercase letters, and contain a number.");
+          "Password must be at least 8 characters long, one lowercase character, one uppercase character, a number, and a special character");
   };
 
   const validateTitle = (title) => {
