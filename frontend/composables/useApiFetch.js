@@ -48,7 +48,13 @@ export async function $fetchApi(url, options = {}) {
     });
     state.data = response?.data || response || null;
   } catch (fetchError) {
-    state.error = fetchError?.data.message || fetchError.message || "Unknown error occurred";
+    // Validation errors
+    if (fetchError?.data?.errors && Array.isArray(fetchError.data.errors) && fetchError.data.errors.length > 0) {
+      state.error = fetchError?.data?.errors[0].msg;
+    } else {
+      // Custom errors or fallback to a generic error message
+      state.error = fetchError?.data?.message || fetchError?.message || "Unknown error occurred";
+    }
   } finally {
     state.loading = false;
   }
