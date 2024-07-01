@@ -72,14 +72,6 @@ exports.signIn = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    if (!email) {
-      throw new RequestError("Email is required");
-    }
-
-    if (!password) {
-      throw new RequestError("Password is required");
-    }
-
     let user = await User.findOne({ where: { email: email }, raw: true });
     if (!user) {
       throw new NotFoundError("User not found");
