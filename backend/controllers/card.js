@@ -3,11 +3,7 @@ const User = db.User;
 const Deck = db.Deck;
 const Card = db.Card;
 
-const {
-  UserError,
-  NotFoundError,
-  RequestError,
-} = require("../helpers/errors/customError");
+const { UserError, NotFoundError, RequestError } = require("../helpers/errors/customError");
 
 exports.getAllCards = async (req, res, next) => {
   let userId = req.userId;
@@ -70,24 +66,6 @@ exports.updateCard = async (req, res, next) => {
   let { title, description } = req.body;
 
   try {
-    // if (!title || !description) {
-    //   throw new RequestError("Title or description cannot be empty");
-    // }
-
-    const maxLengthTitle = 30;
-    if (title.length > maxLengthTitle) {
-      throw new RequestError(
-        `The title cannot exceed ${maxLengthTitle} characters.`
-      );
-    }
-
-    const maxLengthDescription = 160;
-    if (description.length > maxLengthDescription) {
-      throw new RequestError(
-        `The description cannot exceed ${maxLengthDescription} characters.`
-      );
-    }
-
     let user = await User.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundError("User not found");
@@ -99,8 +77,7 @@ exports.updateCard = async (req, res, next) => {
     }
 
     card.title = card.title === title ? card.title : title;
-    card.description =
-      card.description === description ? card.description : description;
+    card.description = card.description === description ? card.description : description;
     // card.is_public = is_public;
 
     if (card.changed()) {
@@ -139,9 +116,7 @@ exports.toggleFavorite = async (req, res, next) => {
     await card.save();
 
     return res.json({
-      message: `Card ${
-        card.is_favorite ? "added to" : "removed from"
-      } favorites`,
+      message: `Card ${card.is_favorite ? "added to" : "removed from"} favorites`,
       data: card,
     });
   } catch (err) {
@@ -155,28 +130,6 @@ exports.createCard = async (req, res, next) => {
   let { title, description } = req.body;
 
   try {
-    if (!title) {
-      throw new RequestError("Title cannot be empty");
-    }
-
-    if (!description) {
-      throw new RequestError("Description cannot be empty");
-    }
-
-    const maxLengthTitle = 30;
-    if (title.length > maxLengthTitle) {
-      throw new RequestError(
-        `The title cannot exceed ${maxLengthTitle} characters.`
-      );
-    }
-
-    const maxLengthDescription = 160;
-    if (description.length > maxLengthDescription) {
-      throw new RequestError(
-        `The description cannot exceed ${maxLengthDescription} characters.`
-      );
-    }
-
     let user = await User.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundError("User not found");
