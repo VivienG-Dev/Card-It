@@ -88,8 +88,7 @@ const validations = {
         .escape(), // Convert characters like <, >, &, ', " and / to their respective HTML entities (XSS attack)
       body("color")
         .trim()
-        .notEmpty()
-        .withMessage("Color is required")
+        .optional()
         .matches(/^#[0-9A-Fa-f]{6}$/)
         .withMessage("Color must be in hex format (e.g., #141A1F)"),
     ],
