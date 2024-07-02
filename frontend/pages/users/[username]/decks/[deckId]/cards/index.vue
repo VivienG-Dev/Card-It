@@ -27,6 +27,12 @@ async function createCard() {
     return;
   }
 
+  if (titleError.value || descriptionError.value) {
+    createCardError.value =
+      titleError.value || descriptionError.value || "Please correct the errors before submitting.";
+    return;
+  }
+
   const createCardApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/${deckId}/cards`;
   const createCardState = await $fetchApi(createCardApiUrl, {
     method: "PUT",
