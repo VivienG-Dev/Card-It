@@ -22,6 +22,17 @@ const description = ref("");
 const createCardError = ref(null);
 const createCardLoading = ref(false);
 async function createCard() {
+  if (!title.value || !description.value) {
+    createCardError.value = "You need to fill in all fields to create a card.";
+    return;
+  }
+
+  if (titleError.value || descriptionError.value) {
+    createCardError.value =
+      titleError.value || descriptionError.value || "Please correct the errors before submitting.";
+    return;
+  }
+
   const createCardApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/${deckId}/cards`;
   const createCardState = await $fetchApi(createCardApiUrl, {
     method: "PUT",

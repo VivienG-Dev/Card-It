@@ -58,6 +58,16 @@ function updateCustomColor() {
 const errorDeck = ref(null);
 const loadingDeck = ref(false);
 async function createDeck() {
+  if (!deckTitle.value) {
+    errorDeck.value = "You need at least a title to create a deck.";
+    return;
+  }
+
+  if (titleError.value) {
+    errorDeck.value = titleError.value || "Please correct the errors before submitting.";
+    return;
+  }
+
   loadingDeck.value = true;
   const createDeckApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks`;
   const createDeckState = await $fetchApi(createDeckApiUrl, {
@@ -82,6 +92,16 @@ async function createDeck() {
 
 const errorCard = ref(null);
 async function createCard() {
+  if (!cardTitle.value || !cardDescription.value) {
+    errorCard.value = "You need to fill in all fields to create a card.";
+    return;
+  }
+
+  if (titleError.value || descriptionError.value) {
+    errorCard.value = titleError.value || descriptionError.value || "Please correct the errors before submitting.";
+    return;
+  }
+
   const createCardApiUrl = `${import.meta.env.VITE_API_URL}/users/${username}/decks/${deckId.value}/cards`;
   const createCardState = await $fetchApi(createCardApiUrl, {
     method: "PUT",

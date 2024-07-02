@@ -66,15 +66,6 @@ exports.updateDeck = async (req, res, next) => {
       throw new UserError("Invalid ID");
     }
 
-    if (!title) {
-      throw new RequestError("The title is missing!");
-    }
-
-    const maxLength = 30;
-    if (title.length > maxLength) {
-      throw new RequestError(`The title cannot exceed ${maxLength} characters.`);
-    }
-
     let user = await User.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundError("User not found");
@@ -108,19 +99,6 @@ exports.createDeck = async (req, res, next) => {
   const { title, color } = req.body;
 
   try {
-    if (!title) {
-      throw new RequestError("The title is missing!");
-    }
-
-    const maxLength = 30;
-    if (title.length > maxLength) {
-      throw new RequestError(`The title cannot exceed ${maxLength} characters.`);
-    }
-
-    if (color && !/^#[0-9A-Fa-f]{6}$/.test(color)) {
-      throw new RequestError("Invalid color format. Please use hex format (e.g., #141A1F).");
-    }
-
     let user = await User.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundError("User not found");
@@ -174,12 +152,12 @@ exports.generateShareLink = async (req, res, next) => {
 
 exports.acceptSharedDeck = async (req, res, next) => {
   let userId = req.userId; // ID of the user who is copying the deck
-  let shareToken = req.params.shareToken;
+  const { token } = req.body;
 
   try {
     // Validate the share token and find the associated deck
     let originalDeck = await Deck.findOne({
-      where: { shareToken: shareToken },
+      where: { shareToken: token },
       include: [{ model: Card, as: "cards" }], // Use the alias defined in association
     });
 

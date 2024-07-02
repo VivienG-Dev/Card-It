@@ -5,14 +5,6 @@ const Card = db.Card;
 
 const { UserError, NotFoundError } = require("../helpers/errors/customError");
 
-exports.getAllUsers = (req, res, next) => {
-  User.findAll()
-    .then((users) => {
-      return res.json({ data: users });
-    })
-    .catch((err) => next(err));
-};
-
 exports.getUserById = async (req, res, next) => {
   let userId = req.userId;
 
@@ -63,6 +55,10 @@ exports.updateUserData = async (req, res, next) => {
   username = username.toLowerCase();
 
   try {
+    if (!username && !password) {
+      throw new UserError("Username or password are required");
+    }
+
     let user = await User.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundError("User not found");
