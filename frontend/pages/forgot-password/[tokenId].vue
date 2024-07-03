@@ -17,6 +17,11 @@ async function updateUserPassword() {
   sendingError.value = "";
   sendingSuccess.value = "";
 
+  if (passwordError.value) {
+    sendingError.value = passwordError.value;
+    return;
+  }
+
   const updateUserPasswordApiUrl = `${import.meta.env.VITE_API_URL}/auth/forgot-password/${tokenId}`;
   const updateUserPasswordState = await $fetchApi(updateUserPasswordApiUrl, {
     method: "PATCH",
