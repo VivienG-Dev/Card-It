@@ -11,18 +11,6 @@ exports.register = async (req, res, next) => {
   let { email, username, password } = req.body;
 
   try {
-    if (!username) {
-      throw new RequestError("Username is required");
-    }
-
-    if (!email) {
-      throw new RequestError("Email is required");
-    }
-
-    if (!password) {
-      throw new RequestError("Password is required");
-    }
-
     username = username.toLowerCase();
 
     let userWithSameUsername = await User.findOne({
