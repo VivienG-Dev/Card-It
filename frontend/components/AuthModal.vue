@@ -43,6 +43,10 @@ watch(successfulResponse, async (newValue) => {
     }
   }
 });
+
+const goToForgotPassword = () => {
+  window.location.href = "http://localhost:3000/forgot-password";
+};
 </script>
 
 <template>
@@ -111,7 +115,7 @@ watch(successfulResponse, async (newValue) => {
                   :type="isPasswordVisible ? 'text' : 'password'"
                   placeholder="Password"
                   v-model="password"
-                  @input="validatePassword(password)"
+                  @input="currentModalType === 'register' ? validatePassword(password) : null"
                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   :class="{
                     'border-red-500': passwordError || (errorResponse && password === ''),
@@ -142,7 +146,9 @@ watch(successfulResponse, async (newValue) => {
               >
             </p>
             <p v-if="currentModalType === 'login'" class="text-sm text-center font-extralight">
-              <nuxt-link to="/forgot-password" class="underline underline-offset-2">Forgot password</nuxt-link>
+              <a @click.prevent="goToForgotPassword" class="underline underline-offset-2 cursor-pointer"
+                >Forgot password</a
+              >
             </p>
           </form>
         </div>
