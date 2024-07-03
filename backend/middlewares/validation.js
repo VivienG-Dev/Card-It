@@ -17,25 +17,24 @@ const validations = {
         .withMessage("Email is required")
         .isEmail()
         .withMessage("Invalid email address")
-        .normalizeEmail(),
+        .customSanitizer((value) => value.toLowerCase()),
       body("password")
         .notEmpty()
         .withMessage("Password is required")
         .isLength({ min: 8 })
         .withMessage("Password must be at least 8 characters long")
-        .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
+        .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/)
         .withMessage(
-          "Password must include one lowercase character, one uppercase character, a number, and a special character"
+          "Password must include one lowercase character, one uppercase character, a number, and a special characterèèèèèè"
         ),
     ],
     signIn: [
       body("email")
-        .trim()
         .notEmpty()
         .withMessage("Email is required")
         .isEmail()
         .withMessage("Invalid email address")
-        .normalizeEmail(),
+        .customSanitizer((value) => value.toLowerCase()),
       body("password").notEmpty().withMessage("Password is required"),
     ],
   },
@@ -133,6 +132,39 @@ const validations = {
         .isLength({ min: 1, max: 160 })
         .withMessage("Back side content must be between 1 and 160 characters")
         .escape(),
+    ],
+  },
+  forgotPassword: {
+    sendEmail: [
+      body("email")
+        .trim()
+        .notEmpty()
+        .withMessage("Email is required")
+        .isEmail()
+        .withMessage("Invalid email address")
+        .normalizeEmail(),
+    ],
+    resetPassword: [
+      body("newPassword")
+        .trim()
+        .notEmpty()
+        .withMessage("Password is required")
+        .isLength({ min: 8 })
+        .withMessage("Password must be at least 8 characters long")
+        .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
+        .withMessage(
+          "Password must include one lowercase character, one uppercase character, a number, and a special character"
+        ),
+      body("confirmPassword")
+        .trim()
+        .notEmpty()
+        .withMessage("Confirm password is required")
+        .isLength({ min: 8 })
+        .withMessage("Confirm password must be at least 8 characters long")
+        .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
+        .withMessage(
+          "Confirm password must include one lowercase character, one uppercase character, a number, and a special character"
+        ),
     ],
   },
 };
