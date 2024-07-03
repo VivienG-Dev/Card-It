@@ -15,9 +15,20 @@ router.put("/register", authLimiter, validations.auth.register, handleValidation
 
 router.get("/verify/:token", authController.verifyEmail);
 
-router.post("/forgot-password", authLimiter, authController.sendEmailToResetPassword);
+router.post(
+  "/forgot-password",
+  authLimiter,
+  validations.forgotPassword.sendEmail,
+  handleValidationErrors,
+  authController.sendEmailToResetPassword
+);
 
-router.patch("/forgot-password/:token", authController.resetPassword);
+router.patch(
+  "/forgot-password/:token",
+  validations.forgotPassword.resetPassword,
+  handleValidationErrors,
+  authController.resetPassword
+);
 
 router.post("/sign-in", authLimiter, validations.auth.signIn, handleValidationErrors, authController.signIn);
 
