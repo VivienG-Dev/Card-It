@@ -45,7 +45,7 @@ watch(successfulResponse, async (newValue) => {
 });
 
 const goToForgotPassword = () => {
-  window.location.href = "http://localhost:3000/forgot-password";
+  window.location.href = "/forgot-password";
 };
 </script>
 
