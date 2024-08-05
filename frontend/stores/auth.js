@@ -27,17 +27,19 @@ export const useAuthStore = defineStore("auth", {
               this.isLoading = false;
             }
 
+            console.log(status, error, data, loading);
+
             if (status === 401) {
               if (error === "No token provided") {
                 this.isAuthenticated = false;
                 localStorage.removeItem("username");
-                // navigateTo("/");
+                navigateTo("/");
               } else if (error === "Invalid token" || error === "Invalid refresh token") {
                 this.handleInvalidToken();
               } else {
                 this.isAuthenticated = false;
                 localStorage.removeItem("username");
-                navigateTo("/");
+                navigateTo("/test");
               }
             } else {
               this.isAuthenticated = true;
@@ -49,7 +51,7 @@ export const useAuthStore = defineStore("auth", {
         this.isAuthenticated = false;
         this.isLoading = false;
         localStorage.removeItem("username");
-        // navigateTo("/");
+        navigateTo("/");
       }
     },
     async handleTokenRefresh() {
