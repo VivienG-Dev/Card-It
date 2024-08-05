@@ -49,7 +49,7 @@ export const useAuthStore = defineStore("auth", {
         this.isAuthenticated = false;
         this.isLoading = false;
         localStorage.removeItem("username");
-        navigateTo("/");
+        // navigateTo("/");
       }
     },
     async handleTokenRefresh() {
