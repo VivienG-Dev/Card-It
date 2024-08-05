@@ -2,6 +2,11 @@
 export default defineNuxtConfig({
   devtools: { enabled: false },
   ssr: true,
+  routeRules: {
+    "/": { ssr: false },
+    "/forgot-password": { ssr: false },
+    "/contact": { ssr: false },
+  },
   modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt"],
   app: {
     head: {
@@ -12,18 +17,16 @@ export default defineNuxtConfig({
         {
           hid: "description",
           name: "description",
-          content:
-            "Create your cards, test your memory and remember it!",
+          content: "Create your cards, test your memory and remember it!",
         },
         { name: "keywords", content: "card-it" },
         { property: "og:title", content: "Card-It" },
         {
           property: "og:description",
-          content:
-            "Create your cards, test your memory and remember it!",
+          content: "Create your cards, test your memory and remember it!",
         },
         { property: "og:image", content: "/card-it-screen.jpg" },
-        { property: 'og:url', content: 'https://card-it-frontend.onrender.com/' },
+        { property: "og:url", content: "https://card-it-frontend.onrender.com/" },
         {
           name: "twitter:card",
           content: "Create your cards, test your memory and remember it!",
@@ -32,8 +35,7 @@ export default defineNuxtConfig({
         { name: "twitter:title", content: "Card-It" },
         {
           name: "twitter:description",
-          content:
-            "Create your cards, test your memory and remember it!",
+          content: "Create your cards, test your memory and remember it!",
         },
         {
           name: "twitter:image",
