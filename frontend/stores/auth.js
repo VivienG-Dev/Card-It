@@ -39,7 +39,7 @@ export const useAuthStore = defineStore("auth", {
               } else {
                 this.isAuthenticated = false;
                 localStorage.removeItem("username");
-                navigateTo("/test");
+                // navigateTo("/test");
               }
             } else {
               this.isAuthenticated = true;
