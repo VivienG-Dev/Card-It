@@ -31,7 +31,7 @@ export const useAuthStore = defineStore("auth", {
               if (error === "No token provided") {
                 this.isAuthenticated = false;
                 localStorage.removeItem("username");
-                navigateTo("/");
+                // navigateTo("/");
               } else if (error === "Invalid token" || error === "Invalid refresh token") {
                 this.handleInvalidToken();
               } else {
